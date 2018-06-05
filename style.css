@@ -3,7 +3,7 @@
 
 body {
     position: relative;
-    background-image: url("/images/online-banking.png");
+    background-image: url("images/online-banking.png");
     background-size: 100% auto;
     background-repeat: no-repeat;
     padding: 0px;
@@ -771,7 +771,7 @@ body {
 }
 
 .lessonFourImg2 {
-    background-image: url("/images/family.png");
+    background-image: url("images/family.png");
     background-repeat: no-repeat;
     background-size: auto 100%;
     width: 100%;
@@ -780,7 +780,7 @@ body {
 }
 
 .lessonFourImg3 {
-    background-image: url("/images/house.png");
+    background-image: url("images/house.png");
     background-repeat: no-repeat;
     background-size: auto 100%;
     background-position: right;
@@ -790,7 +790,7 @@ body {
 }
 
 .lessonFourImg4 {
-    background-image: url("/images/sunset.png");
+    background-image: url("images/sunset.png");
     background-repeat: no-repeat;
     background-size: auto 100%;
     width: 100%;

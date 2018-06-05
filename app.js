@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
 
-    var snd = new Audio("/assets/notification.mp3");
+    var snd = new Audio("assets/notification.mp3");
 
     Vue.component('line-chart', {
         extends: VueChartJs.Line,
