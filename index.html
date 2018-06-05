@@ -244,10 +244,10 @@
                                             <h4 class="font1">Investment Horizont</h4>
                                             <div class="getStartedController">
                                                 <div class="getStartedSlider">
-                                                    <Slider v-model="getStartedParameters.investmentHorizon" :min="5" :max="60"></Slider>
+                                                    <Slider v-model.number="getStartedParameters.investmentHorizon" :min="5" :max="60"></Slider>
                                                 </div>
                                                 <div class="getStartedInput">
-                                                    <i-Input v-model="getStartedParameters.investmentHorizon">
+                                                    <i-Input v-model.number="getStartedParameters.investmentHorizon">
                                                         <span slot="prepend">Jahre</span>
                                                     </i-Input>
                                                 </div>
@@ -255,7 +255,7 @@
                                             <h4 class="font1">Anfängliches Investment</h4>
                                             <div class="getStartedController">
                                                 <div class="getStartedSlider">
-                                                    <Slider v-model="getStartedParameters.initialInvestment" :min="5000" :max="500000" :step="1000"></Slider>
+                                                    <Slider v-model.number="getStartedParameters.initialInvestment" :min="5000" :max="500000" :step="1000"></Slider>
                                                 </div>
                                                 <div class="getStartedInput">
                                                     <i-Input v-model="getStartedParameters.initialInvestment">
@@ -1123,18 +1123,18 @@
                                             <div class="editGoal-chartControl">
                                                 <div class="font1 semi-bold" style="margin-bottom: 10px;">Monatlicher Sparbetrag</div>
                                                 <div style="width:120px">
-                                                    <i-Input v-model="goalSimulation.monthlyInvestment">
+                                                    <i-Input v-model.number="goalSimulation.monthlyInvestment">
                                                         <span slot="prepend">CHF</span>
                                                     </i-Input>
                                                 </div>
                                                 <div class="">
-                                                    <Slider v-model="goalSimulation.monthlyInvestment" :min="0" :max="10000" :step="100"></Slider>
+                                                    <Slider v-model.number="goalSimulation.monthlyInvestment" :min="0" :max="10000" :step="100"></Slider>
                                                 </div>
                                             </div>
                                             <div class="editGoal-chartControl">
                                                 <div class="font1 semi-bold" style="margin-bottom: 10px;">Einmalige Einzahlung</div>
                                                 <div style="width:120px">
-                                                    <i-Input v-model="goalSimulation.initialInvestment">
+                                                    <i-Input v-model.number="goalSimulation.initialInvestment" >
                                                         <span slot="prepend">CHF</span>
                                                     </i-Input>
                                                 </div>

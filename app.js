@@ -559,7 +559,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             label: 'LunaInvest',
                             backgroundColor: 'rgb(99, 61, 252, 0.8)',
                             borderColor: 'rgb(99, 61, 252)',
-                            data: this.getChartData(this.goalSimulation.investmentHorizon, this.goalSimulation.initialInvestment, this.goalSimulation.monthlyInvestment, 1.02,1.07, this.goalSimulation.proportion, this.goalSimulation.periodicIncrease)
+                            data: this.getChartData(this.goalSimulation.investmentHorizon, this.goalSimulation.initialInvestment, this.goalSimulation.monthlyInvestment, 1.02, 1.07, this.goalSimulation.proportion, this.goalSimulation.periodicIncrease)
                         }
                     ]
                 }
