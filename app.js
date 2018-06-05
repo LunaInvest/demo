@@ -102,7 +102,7 @@ document.addEventListener('DOMContentLoaded', function () {
             },
             formInline: {
                 user: '',
-                password: 'luna',
+                password: '',
                 age: 30
             },
             ruleInline: {
@@ -569,7 +569,7 @@ document.addEventListener('DOMContentLoaded', function () {
             welcomePageHandleSubmit(name, password) {
                 var self = this;
                 this.$refs[name].validate((valid) => {
-                    if (valid && password == 'luna') {
+                    if (valid && password == 'lunademo') {
                         this.$Message.success('Success!');
                         this.activeView.welcome = 0;
                         setTimeout(function(){
