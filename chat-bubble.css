@@ -1,0 +1,121 @@
+body {
+    padding-top: 50px;
+    background: white;
+}
+
+#chatbox {
+    display: flex;
+    flex-direction: column;
+}
+
+/* .collapse {
+    display: flex;
+    justify-content: flex-end;
+    flex-direction: column;
+    overflow: hidden;
+    animation: col 1s infinite;
+}
+
+
+    @keyframes col {
+        0% {
+            height: 200px;
+        }
+        100% {
+            height: 0px;
+        }
+    } */
+
+
+
+.bubble-left{
+    align-self: flex-start;
+    margin-bottom: 20px;
+    border-radius: 6px;
+    background: #ffffff;
+    padding: 0.75rem;
+    position: relative;
+    overflow: visible;
+    margin-bottom: 0.5rem;
+    box-shadow: 0px 1px 2px 0px #B4C5D9;
+}
+
+.bubble-left::before {
+    content: "";
+    position: absolute;
+    left: 1px;
+    margin-left: -4px;
+    top: 50%;
+    margin-top: -0.25rem;
+    width: 10px;
+    height: 10px;
+    background: white;
+    -webkit-transform: rotate(156deg) skew(30deg);
+    transform: rotate(156deg) skew(30deg);
+    box-shadow: 2px 1px 1px -1px #d7e0eb;
+}
+
+.bubble-right{
+    align-self: flex-end;
+    margin-bottom: 20px;
+    border-radius: 6px;
+    background: blue;
+    color: white;
+    padding: 0.75rem;
+    position: relative;
+    overflow: visible;
+    margin-bottom: 0.5rem;
+    box-shadow: 0px 1px 2px 0px blue;
+}
+
+.bubble-right::before {
+    content: "";
+    position: absolute;
+    right: -2px;
+    margin-left: -4px;
+    top: 50%;
+    margin-top: -0.25rem;
+    width: 10px;
+    height: 10px;
+    background: blue;
+    -webkit-transform: rotate(130deg) skew(30deg) scaleX(-1);
+    transform: rotate(156deg) skew(30deg) scaleX(-1);
+    box-shadow: 2px 1px -1px -1px blue;
+}
+
+.loading{
+    position: relative;
+    width: 45px;
+    height: 18px;
+    font: 400 3.5em "Times New Roman";
+    text-align: center;
+}
+
+.loading:after {
+    position: absolute;
+    top: -25px;
+    left: 14px;
+    content: ' .';
+    animation: dots 1s steps(5, end) infinite;
+}
+  
+  @keyframes dots {
+    0%, 20% {
+      color: rgba(0,0,0,0);
+      text-shadow:
+        .25em 0 0 rgba(0,0,0,0),
+        .5em 0 0 rgba(0,0,0,0);}
+    40% {
+      color: rgb(31, 30, 30);
+      text-shadow:
+        .25em 0 0 rgba(0,0,0,0),
+        .5em 0 0 rgba(0,0,0,0);}
+    60% {
+      text-shadow:
+        .25em 0 0 rgb(31, 30, 30),
+        .5em 0 0 rgba(0,0,0,0);}
+    80%, 100% {
+      text-shadow:
+        .25em 0 0 rgb(31, 30, 30),
+        .5em 0 0 rgb(31, 30, 30);}
+    }

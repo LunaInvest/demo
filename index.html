@@ -1,0 +1,1410 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="style.css">
+
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+
+    <!-- import stylesheet -->
+    <link rel="stylesheet" href="//unpkg.com/iview/dist/styles/iview.css">
+    <!-- import iView -->
+    <script type="application/javascript" src="//unpkg.com/iview/dist/iview.min.js"></script>
+
+    <script type="application/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
+    <script type="application/javascript" src="https://unpkg.com/vue-chartjs/dist/vue-chartjs.min.js"></script>
+
+    <script type="application/javascript" src="app.js"></script>
+
+    <title>LunaInvest App</title>
+</head>
+
+<body style="position: relative;">
+    <div id="app">
+
+        <transition-group name="switch-OB-Luna" enter-active-class="animated slideInUp" leave-active-class="animated slideOutDown"  ag="div" mode="out-in">
+            
+            <div v-if="activeView.hideLuna" class="lunaBottomBarContainer" key="hideLuna">
+                <div class="lunaBottomBar" @click="activeView.hideLuna = !activeView.hideLuna">
+                    <img class="lunaImage" src="/images/luna.png">
+                    <div class="l5" style="padding-left: 50px;"><span class="font1 bold">Finanzielle Planung und Investieren war noch nie so einfach.</span><br>
+                        <span class="font1">Luna erledigt das für dich!</span></div>
+                </div>
+            </div>
+
+            <div v-if="!activeView.hideLuna" class="supercontainer" key="showLuna">
+                <transition name="custom-classes-transition" leave-active-class="animated fadeOut">
+                    <div v-if="activeView.welcome" class="welcomeContainer" key="welcome">
+                        <h1 class="font2 white">Willkommen zur LunaInvest Demo</h1>
+                        <div>
+                            <i-Form ref="formInline" :model="formInline" :rules="ruleInline" inline>
+                                <Form-Item prop="user">
+                                    <i-Input type="text" v-model="formInline.user" placeholder="Vorname">
+                                    </i-Input>
+                                </Form-Item>
+                                <Form-Item prop="password">
+                                    <i-Input type="password" v-model="formInline.password" placeholder="Passwort">
+                                    </i-Input>
+                                </Form-Item>
+                                <Form-Item>
+                                    <i-Button type="primary" @click="welcomePageHandleSubmit('formInline', formInline.password)">Demo starten</i-Button>
+                                </Form-Item>
+                            </i-Form>
+                        </div>
+                    </div>
+                </transition>
+
+                <transition name="modalAnimation" enter-active-class="animated zoomIn" leave-active-class="animated fadeOut" mode="out-in">
+                    <div v-if="activeView.overLay" class="modalContainer">
+                        <div class="chatModal"></div>
+                        <transition name="modalAnimation" enter-active-class="animated fadeIn" leave-active-class="animated fadeOut">
+                            <div v-if="activeView.hiThere" class="chatModal" key="hiThere">
+                                <div class="chatWindow">
+                                    <div class="closeModal" @click="activeView.hideLuna = !activeView.hideLuna"></div>
+                                    <div class="lunaChatProfile">
+                                        <image class="lunaImage" src="/images/luna.png">
+                                            <div class="lunaName">
+                                                <h2 class="font1 bold">Luna</h2>
+                                                <p class="font1">Dein cleverer Investment Bot</p>
+                                            </div>
+                                    </div>
+                                    <div class="chatMessages">
+                                        <div v-for="item in chatMessages.hiThere" v-if="item.show" :class="{loading: item.loading}" class="bubble-left font1">
+                                            <span v-if="!item.loading">{{item.msg}}</span>
+                                        </div>
+                                    </div>
+                                    <div class="chatAnswer">
+                                        <i-Button class="font1" type="primary" size="large" @click="hiThereNext">Wie kannst du mir helfen?</i-Button>
+                                    </div>
+                                </div>
+                                <div class="chatSlideShow">
+                                    <div class="l1 font1 bold center white">Plane deine Zukunft mit Luna.</div>
+                                    <div class="l3 font2 center white">Die clevere und moderne Art zu investieren.</div>
+                                </div>
+                            </div>
+                            <div v-if="activeView.myService" class="chatModal" key="myService">
+                                <div class="chatWindow">
+                                    <div class="closeModal" @click="activeView.hideLuna = !activeView.hideLuna"></div>
+                                    <div class="lunaChatProfile">
+                                        <image class="lunaImage" src="/images/luna.png">
+                                            <div class="lunaName">
+                                                <h2 class="font1 bold">Luna</h2>
+                                                <p class="font1">Dein cleverer Investment Bot</p>
+                                            </div>
+                                    </div>
+                                    <div class="chatMessages">
+                                        <div class="bubble-right font1">Wie kannst du mir helfen?</div>
+                                        <div v-for="item in chatMessages.myService" v-if="item.show" :class="{loading: item.loading}" class="bubble-left font1">
+                                            <span v-if="!item.loading">{{item.msg}}</span>
+                                        </div>
+                                    </div>
+                                    <div class="chatAnswer">
+                                        <i-Button class="font1" type="ghost" size="large" @click="justStart">Überspringen und loslegen!</i-Button>
+                                        <i-Button class="font1" type="primary" size="large" @click="myServiceNext">Meine Lebensziele?</i-Button>
+                                    </div>
+                                </div>
+                                <div class="chatSlideShow" style="justify-content: flex-end; background: rgb(236, 223, 253); padding: 0px">
+                                    <div class="l2 font1 bold center black" style="margin-top: 70px">Investments die zu deinem Leben passen.</div>
+                                    <div class="l4 font2 center black">Die clevere und moderne Art zu investieren.</div>
+                                    <image class="relaxImage" src="/images/relax.png"></image>
+                                </div>
+                            </div>
+                            <div v-if="activeView.lifeGoals" class="chatModal" key="lifeGoals">
+                                <div class="chatWindow">
+                                    <div class="closeModal" @click="activeView.hideLuna = !activeView.hideLuna"></div>
+                                    <div class="lunaChatProfile">
+                                        <image class="lunaImage" src="/images/luna.png">
+                                            <div class="lunaName">
+                                                <h2 class="font1 bold">Luna</h2>
+                                                <p class="font1">Dein cleverer Investment Bot</p>
+                                            </div>
+                                    </div>
+                                    <div class="chatMessages">
+                                        <div class="bubble-right font1">Meine Lebensziele?</div>
+                                        <div v-for="item in chatMessages.lifeGoals" v-if="item.show" :class="{loading: item.loading}" class="bubble-left font1">
+                                            <span v-if="!item.loading" v-html="item.msg"></span>
+                                        </div>
+                                    </div>
+                                    <div class="chatAnswer">
+                                        <i-Button class="font1" type="ghost" size="large" @click="justStart">Überspringen und loslegen!</i-Button>
+                                        <i-Button class="font1" type="primary" size="large" @click="lifeGoalsNext">Und weiter?</i-Button>
+                                    </div>
+                                </div>
+                                <div class="chatSlideShow">
+                                    <div class="l2 font1 bold white" style="margin: 40px 0px">Finanzielle Freiheit dank Luna.</div>
+                                    <image class="performancePlusImage" src="/images/performanceplus.png"></image>
+                                </div>
+                            </div>
+                            <div v-if="activeView.tooComplex" class="chatModal" key="tooComplex">
+                                <div class="chatWindow">
+                                    <div class="closeModal" @click="activeView.hideLuna = !activeView.hideLuna"></div>
+                                    <div class="lunaChatProfile">
+                                        <image class="lunaImage" src="/images/luna.png">
+                                            <div class="lunaName">
+                                                <h2 class="font1 bold">Luna</h2>
+                                                <p class="font1">Dein cleverer Investment Bot</p>
+                                            </div>
+                                    </div>
+                                    <div class="chatMessages">
+                                        <div class="bubble-right font1">Und weiter?</div>
+                                        <div v-for="item in chatMessages.tooComplex" v-if="item.show" :class="{loading: item.loading}" class="bubble-left font1">
+                                            <span v-if="!item.loading" v-html="item.msg"></span>
+                                        </div>
+                                    </div>
+                                    <div class="chatAnswer">
+                                        <i-Button class="font1" type="ghost" size="large" @click="tooComplexNext">Hmm...</i-Button>
+                                        <i-Button class="font1" type="primary" size="large" @click="justStart">Jetzt loslegen!</i-Button>
+                                    </div>
+                                </div>
+                                <div class="chatSlideShow">
+                                    <div class="l2 font1 bold center white">Je früher du dich entscheidest, dein Geld für dich arbeiten zu lassen, desto schneller
+                                        erreichst du deine Ziele.</div>
+                                </div>
+                            </div>
+                            <div v-if="activeView.moreInfo" class="chatModal" key="moreInfo">
+                                <div class="chatWindow">
+                                    <div class="closeModal" @click="activeView.hideLuna = !activeView.hideLuna"></div>
+                                    <div class="lunaChatProfile">
+                                        <image class="lunaImage" src="/images/luna.png">
+                                            <div class="lunaName">
+                                                <h2 class="font1 bold">Luna</h2>
+                                                <p class="font1">Dein cleverer Investment Bot</p>
+                                            </div>
+                                    </div>
+                                    <div class="chatMessages">
+                                        <div class="bubble-right font1">Hmm...</div>
+                                        <div v-for="item in chatMessages.moreInfo" v-if="item.show" :class="{loading: item.loading}" class="bubble-left font1">
+                                            <span v-if="!item.loading" v-html="item.msg"></span>
+                                        </div>
+                                    </div>
+                                    <div class="chatAnswer">
+                                        <i-Button class="font1" type="primary" size="large" @click="justStart">Jetzt loslegen!</i-Button>
+                                    </div>
+                                </div>
+                                <div class="chatSlideShow" style="align-items: flex-start">
+                                    <div class="l3 font1 bold white">Noch unschlüssig? Frag mich etwas!</div>
+                                    <i-Button class="font1 moreQuestions" type="primary" size="large" @click="info">Lohnt sich investieren?</i-Button>
+                                    <i-Button class="font1 moreQuestions" type="primary" size="large" @click="info">Was kostet mich das?</i-Button>
+                                    <i-Button class="font1 moreQuestions" type="primary" size="large" @click="info">Was ist das A und O beim investieren?</i-Button>
+                                    <i-Button class="font1 moreQuestions" type="primary" size="large" @click="info">Was ist der Vorteil, wenn ich mit dir investiere?</i-Button>
+                                    <i-Button class="font1 moreQuestions" type="primary" size="large" @click="info">Ich habe Angst Geld zu verlieren!</i-Button>
+                                    <i-Button class="font1 moreQuestions" type="primary" size="large" @click="info">Wer oder was entscheidet, in was investiert wird?</i-Button>
+                                </div>
+                            </div>
+                        </transition>
+                    </div>
+                </transition>
+
+                <!-- This is used to cover the online banking image during transitions -->
+                <div v-if="activeView.whiteOverlay" class="whiteBackground positionFixedFull"></div>
+
+                <transition-group name="setUpAnimation" enter-active-class="animated fadeIn" leave-active-class="animated fadeOut" mode="out-in"
+                    tag="div">
+                    <div v-if="activeView.getStarted" class="positionAbsolute" key="getStarted">
+                        <div class="whiteBackground">
+                            <div class="header">
+                                <div class="getStartedContainer">
+                                    <div class="col-6">
+                                        <div class="lunaChatProfile">
+                                            <image class="lunaImage" src="/images/luna.png">
+                                                <div class="lunaName">
+                                                    <h2 class="font1 bold white">Luna</h2>
+                                                    <p class="font1 white">Dein cleverer Investment Bot</p>
+                                                </div>
+                                        </div>
+                                        <div class="chatMessages" style="height: 450px">
+                                            <div v-for="item in chatMessages.getStarted" v-if="item.show" :class="{loading: item.loading}" class="bubble-left font1">
+                                                <span v-if="!item.loading" v-html="item.msg"></span>
+                                            </div>
+                                        </div>
+                                        <div class="chatAnswer bottom">
+                                            <i-Button class="font1" type="primary" size="large" @click="getStartedNext">Weiter</i-Button>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="backToOB font1" @click="activeView.hideLuna = !activeView.hideLuna">Zum Online Banking wechseln</div>
+                                        <div class="chartContainer">
+                                            <div class="getStartedResult">
+                                                <div class="getStartedR">
+                                                    <div class="font1 xs">Wert deines Investments nach {{getStartedParameters.investmentHorizon}}
+                                                        Jahren</div>
+                                                    <div class="font1 font1 l4 bold" style="color: rgb(99, 61, 252)">CHF {{ roundAndFormat(getStartedChart.datasets[1].data[getStartedParameters.investmentHorizon
+                                                        - 1]) }}</div>
+                                                </div>
+                                                <div class="getStartedL">
+                                                    <div class="font1 xs">Wert falls das Geld nicht investiert wird</div>
+                                                    <div class="font1 l4 bold" style="color: rgb(255, 99, 132)">CHF {{ roundAndFormat(getStartedChart.datasets[0].data[getStartedParameters.investmentHorizon
+                                                        - 1]) }}</div>
+                                                </div>
+                                            </div>
+                                            <line-chart :chart-data="getStartedChart" :options="'Zeit in Jahren'" style="height: 350px"></line-chart>
+                                            <h4 class="font1">Investment Horizont</h4>
+                                            <div class="getStartedController">
+                                                <div class="getStartedSlider">
+                                                    <Slider v-model="getStartedParameters.investmentHorizon" :min="5" :max="60"></Slider>
+                                                </div>
+                                                <div class="getStartedInput">
+                                                    <i-Input v-model="getStartedParameters.investmentHorizon">
+                                                        <span slot="prepend">Jahre</span>
+                                                    </i-Input>
+                                                </div>
+                                            </div>
+                                            <h4 class="font1">Anfängliches Investment</h4>
+                                            <div class="getStartedController">
+                                                <div class="getStartedSlider">
+                                                    <Slider v-model="getStartedParameters.initialInvestment" :min="5000" :max="500000" :step="1000"></Slider>
+                                                </div>
+                                                <div class="getStartedInput">
+                                                    <i-Input v-model="getStartedParameters.initialInvestment">
+                                                        <span slot="prepend">CHF</span>
+                                                    </i-Input>
+                                                </div>
+                                            </div>
+
+                                            <h4 class="font1">Monatlicher Sparbetrag</h4>
+                                            <div class="getStartedController">
+                                                <div class="getStartedSlider">
+                                                    <Slider v-model="getStartedParameters.monthlyInvestment" :min="0" :max="10000" :step="100"></Slider>
+                                                </div>
+                                                <div class="getStartedInput">
+                                                    <i-Input v-model="getStartedParameters.monthlyInvestment">
+                                                        <span slot="prepend">CHF</span>
+                                                    </i-Input>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div v-if="activeView.questions" class="positionAbsolute" key="questions">
+                        <!-- <div class="header" style="position: fixed; height: 270px; z-index: 10;"> -->
+                        <div class="header" style="height: 190px;">
+                            <div class="standardContainer">
+                                <div class="backToOB font1" @click="activeView.hideLuna = !activeView.hideLuna">Zum Online Banking wechseln</div>
+                                <div class="hcenter">
+                                    <div class="questionsLuna">
+                                        <image class="lunaImage" src="/images/luna.png">
+                                            <div class="bubble-left font1" style="margin-left: 30px">{{ formInline.user }}, damit ich dir das bestmöglichen Resultat geben kann, hab
+                                                ich noch einige Fragen an dich…</div>
+                                    </div>
+                                </div>
+                                <!-- <div class="questionsResultsContainer">
+                                <div class="questionResult white"><div class="font1">Alter</div><div class="font1 bold l4">27</div></div>
+                                <div class="questionResult white"><div class="font1">Total Vermögenswerte</div><div class="font1 bold l4">CHF 620,000</div></div>
+                                <div class="questionResult white"><div class="font1">Total Haushaltseinkommen</div><div class="font1 bold l4">CHF 90,000</div></div>
+                                <div class="questionResult white"><div class="font1">Potentielles Vermögen bei Pensionierung mit 65</div><div class="font1 bold l4">CHF 3,512,412</div></div>
+                            </div> -->
+                            </div>
+                        </div>
+                        <div class="questionBody hcenter">
+                            <div class="standardContainer">
+                                <div class="questionRow" style="border:none;">
+                                    <div class="questionDescription">
+                                        <div class="font2 bold l2" style="line-height: 1; margin-bottom: 15px;">Fragen zu deinem beruflichen Hintergrund</div>
+                                        <p class="font1">Informationen zu deiner beruflichen Situation helfen Luna, dir eine personalisierte
+                                            Empfehlung zu möglichen Vorsorgelösungen und Kontotypen abzugeben (Investitionskonto
+                                            oder Säule 3a Konto).</p>
+                                    </div>
+                                    <div class="questionColumn">
+                                        <transition-group name="question-complete" tag="div">
+                                            <div class="question" key="q1">
+                                                <div class="font1 bold l5">Beruflicher Status</div>
+                                                <i-Select v-model="answers.employment" style="width:250px" size="large" placeholder="Bitte auswählen">
+                                                    <i-Option v-for="item in questions.employment" :value="item.value" :key="item.value">{{ item.label }}</i-Option>
+                                                </i-Select>
+                                            </div>
+                                            <!-- <div v-if="answers.employment == 'Selbstständig'" class="question" key="q2">
+                                            <div class="font1 bold l5">Bist du einer Pensionskasse angeschlossen?</div>
+                                            <Radio-Group v-model="answers.pensionskasse" vertical>
+                                                <Radio label="Ja">
+                                                    <span>Ja</span>
+                                                </Radio>
+                                                <Radio label="Nein">
+                                                    <span>Nein</span>
+                                                </Radio>
+                                            </Radio-Group>
+                                        </div> -->
+                                            <div class="question" key="q3">
+                                                <div class="font1 bold l5">Zahlst du Beiträge in die Säule 3a?</div>
+                                                <Radio-Group v-model="answers.säule3a" @on-change="answers.betrag3a = 0" vertical>
+                                                    <Radio label="Ja">
+                                                        <span>Ja</span>
+                                                    </Radio>
+                                                    <Radio label="Nein">
+                                                        <span>Nein</span>
+                                                    </Radio>
+                                                </Radio-Group>
+                                            </div>
+                                            <div v-if="answers.employment != 'Selbstständig' && answers.säule3a == 'Ja'" class="question" key="q4">
+                                                <div class="font1 bold l5">Wie hoch ist der Betrag, den du monatlich in die Säule 3a einzahlst?</div>
+                                                <i-Input v-model="answers.betrag3a" :placeholder="answers.betrag3a" :number="true" type="number" style="width:250px" size="large">
+                                                    <span slot="prepend">CHF</span>
+                                                </i-Input>
+                                                <Radio-Group v-model="answers.betrag3a" vertical>
+                                                    <Radio label="564">
+                                                        <span>Monatlicher Maximalbetrag (CHF 564)</span>
+                                                    </Radio>
+                                                </Radio-Group>
+                                            </div>
+                                            <div v-if="answers.employment == 'Selbstständig' && answers.säule3a == 'Ja'" class="question" key="q5">
+                                                <div class="font1 bold l5">Wie hoch ist der Betrag, den du monatlich in die Säule 3a einzahlst?</div>
+                                                <i-Input v-model="answers.betrag3a" :placeholder="answers.betrag3a" :number="true" type="number" style="width:250px" size="large">
+                                                    <span slot="prepend">CHF</span>
+                                                </i-Input>
+                                            </div>
+                                        </transition-group>
+                                    </div>
+                                </div>
+                                <div class="questionRow">
+                                    <div class="questionDescription">
+                                        <div class="font2 bold l2" style="line-height: 1; margin-bottom: 15px;">Fragen zu deinen Finanzen</div>
+                                        <p class="font1">Die Angaben zu deiner derzeitigen finanziellen Situation helfen Luna, Investments
+                                            optimal auf dich zuzuschneiden.</p>
+                                    </div>
+                                    <div class="questionColumn">
+                                        <transition-group name="question-complete" tag="div">
+                                            <div class="question" key="q6">
+                                                <div class="font1 bold l5">In welcher Art von Haushalt lebst du?</div>
+                                                <i-Select v-model="answers.household" style="width:350px" size="large" placeholder="Bitte auswählen">
+                                                    <i-Option v-for="item in questions.household" :value="item.value" :key="item.value">{{ item.label }}</i-Option>
+                                                </i-Select>
+                                            </div>
+                                            <div class="question" key="q7">
+                                                <div class="font1 bold l5">Was ist der Wert deines liquiden Vermögens?</div>
+                                                <p class="font1">z.B. Credit Suisse Kontoguthaben, Kontoguthaben bei anderen Banken, Aktien
+                                                    <br>Zur Erinnerung: Dein Kontoguthaben bei der Credit Suisse beträgt CHF
+                                                    106,821.</p>
+                                                <i-Select v-model="answers.assets" style="width:250px" size="large" placeholder="Bitte auswählen">
+                                                    <i-Option v-for="item in questions.assets" :value="item.value" :key="item.value">{{ item.label }}</i-Option>
+                                                </i-Select>
+                                            </div>
+                                            <div class="question" key="q8">
+                                                <div class="font1 bold l5">Wie hoch ist dein jährliches Einkommen vor Steuern?</div>
+                                                <p class="font1">Dazu gehört zum Beispiel dein Lohn, aber auch Mieteinnahmen oder ähnliches.</p>
+                                                <i-Select v-model="answers.income" style="width:250px" size="large" placeholder="Bitte auswählen">
+                                                    <i-Option v-for="item in questions.income" :value="item.value" :key="item.value">{{ item.label }}</i-Option>
+                                                </i-Select>
+                                            </div>
+                                            <div class="question" key="q9">
+                                                <div class="font1 bold l5">Bist du im Besitz von Immobilien?</div>
+                                                <Radio-Group v-model="answers.realestate" @on-change="answers.realestateValue = ''; answers.mortgage = '';" vertical>
+                                                    <Radio label="Ja">
+                                                        <span>Ja</span>
+                                                    </Radio>
+                                                    <Radio label="Nein">
+                                                        <span>Nein</span>
+                                                    </Radio>
+                                                </Radio-Group>
+                                            </div>
+                                            <div v-if="answers.realestate == 'Ja'" key="q10">
+                                                <div class="question">
+                                                    <div class="font1 bold l5">Wie viel sind deine Immobilien ungefähr wert?</div>
+                                                    <i-Input v-model="answers.realestateValue" @on-keyup="answers.realestateValue = format(answers.realestateValue)" :placeholder="answers.realestateValue"
+                                                        style="width:250px" size="large">
+                                                        <span slot="prepend">CHF</span>
+                                                    </i-Input>
+                                                </div>
+                                                <div class="question">
+                                                    <div class="font1 bold l5">Was ist der totale Wert deiner Hypotheken auf deinen Immobilien?</div>
+                                                    <p class="font1">Falls du keine Hypotheken hast, schreib einfach 0.</p>
+                                                    <i-Input v-model="answers.mortgage" @on-keyup="answers.mortgage = format(answers.mortgage)" :placeholder="answers.mortgage"
+                                                        style="width:250px" size="large">
+                                                        <span slot="prepend">CHF</span>
+                                                    </i-Input>
+                                                </div>
+                                            </div>
+                                        </transition-group>
+                                    </div>
+                                </div>
+
+                                <div class="nextContainer">
+                                    <i-Button class="font1" type="primary" size="large" @click="questionsNext">
+                                        <span class="l4">Weiter</span>
+                                    </i-Button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div v-if="activeView.lessons" class="positionAbsolute" key="lessons">
+                        <div class="header" style="height: 70px;">
+                            <div class="standardContainer">
+                                <div class="backToOB font1" @click="activeView.hideLuna = !activeView.hideLuna">Zum Online Banking wechseln</div>
+                            </div>
+                        </div>
+                        <div class="lessonsBody hcenter">
+                            <div class="standardContainer">
+                                <img class="lessonsImg" src="/images/invest.png">
+                                <div class="lessonsTitle font2 l1 bold">Was jeder zum Thema Investieren wissen sollte und doch kaum jemand richtig macht.</div>
+                                <div class="hcenter" style="padding-right:100px">
+                                    <div class="questionsLuna">
+                                        <image class="lunaImage" src="/images/luna.png">
+                                            <div>
+                                                <div class="bubble-left font1" style="margin-left: 30px">{{ formInline.user }}, der menschliche Verstand ist evolutions-biologisch
+                                                    schlichtweg nicht dazu geeignet, gut Investitionsentscheide zu treffen
+                                                    – Emotionen sei Dank!</div>
+                                                <div class="bubble-left font1" style="margin-left: 30px">Aber keine Sorge, genau deswegen begleite ich dich und warne dich, bevor
+                                                    du einen Fehler machen könntest.</div>
+                                                <div class="bubble-left font1" style="margin-left: 30px">Trotzdem behältst du zu jedem Zeitpunkt die volle Kontrolle und so ist es
+                                                    mir wichtig, dass du verstehst, worauf es beim investieren wirklich ankommt.</div>
+                                                <div class="bubble-left font1" style="margin-left: 30px">Die nachfolgenden Lektionen sind so wichtig, dass du dir sie eigentlich unters
+                                                    Kopfkissen legen solltest. Glaub mir, wenn du dir das verinnerlichst,
+                                                    dann bist du ein besserer Investor als ein Grossteil der «Profis»….</div>
+                                            </div>
+                                    </div>
+                                </div>
+                                <div class="nextContainer" style="margin-top: 50px;">
+                                    <i-Button class="font1 l4" type="primary" size="large" @click="lessonsNext">
+                                        <span class="l4">Zu Lektion 1 von 4</span>
+                                    </i-Button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div v-if="activeView.lessonOne" class="positionAbsolute" key="lesson1">
+                        <div class="lessonOneBody hcenter">
+                            <div class="headerAlt" style="height: 70px; position: absolute; top: 0; z-index: 10;">
+                                <div class="standardContainer">
+                                    <div class="backToOBAlt font1" @click="activeView.hideLuna = !activeView.hideLuna">Zum Online Banking wechseln</div>
+                                </div>
+                            </div>
+                            <img class="lessonOneImg1" src="/images/universe.png">
+                            <div class="standardContainer">
+                                <div class="lessonOneHeadline">
+                                    <div class="lessonTag font1 l5">Lektion 1 von 4</div>
+                                    <div class="lessonOneTitle font2 l1 bold">Der kluge Investor denkt langfristig.</div>
+                                </div>
+
+                                <div class="WBcontainer">
+                                    <p class="font1">Unsere bevorzugte Halteperiode für Investments ist
+                                        <strong>ewig</strong>!</p>
+                                    <div class="WBimageContainer">
+                                        <img src="images/WB.png" class="WBimage">
+                                        <p class="font2">
+                                            <strong>Warren Buffett</strong>
+                                            <br>Starinvestor & 3. reichster Mensch der Welt"</p>
+                                    </div>
+                                    <img src="images/quote.PNG" class="quotationMarks">
+                                </div>
+
+                                <div class="hcenter">
+                                    <div class="center font1" style="width: 600px">
+                                        Du meinst es wirklich ernst mit investieren? Dann hör auf Warren Buffett. Warren Buffett hat verstanden, dass kurzfristige
+                                        Markschwankungen und Verluste absolut normal sind. Er gerät deswegen nicht in Panik
+                                        und weiss, dass sich die Märkte auch wieder erholen. Diese Disziplin hat ihn zu einem
+                                        der reichsten Menschen der Welt gemacht. Wer langfristig investiert und seiner Strategie
+                                        treu bleibt, braucht sich nicht um Finanzkrisen oder ähnlich zu sorgen.
+                                    </div>
+                                </div>
+                                <div class="lessonOneFullWidth">
+                                    <div class="lessonOneBoxL">
+                                        <h1 class="font2 bold white">Langfristig bewegt sich der Markt nach oben</h1>
+                                        <p class="font1 white" style="margin-top:10px">Die Grafik rechts zeigt eindrücklich: $1 investiert im Jahre 1870 wäre heute fast
+                                            $34,ooo wert. Dies entspricht einer durchschnittlichen Rendite von mehr als 7%
+                                            pro Jahr.</p>
+                                        <p class="font1 white" style="margin-top:10px">Fällt dir noch etwas auf? Die Kursentwicklung war nicht in allen Jahren gleich gut,
+                                            doch über längere Zeiträume gesehen gleicht sich das aus und der Kurs folgt einer
+                                            konstanten Aufwärtsbewegung.</p>
+                                    </div>
+                                    <img src="images/longterm.png" class="lessonOneImg2">
+                                </div>
+                                <div class="lessonOneFullWidth" style="justify-content: flex-end; margin-top: 200px;">
+                                    <div class="lessonOneBoxR">
+                                        <h1 class="font2 bold white">Finanzkrisen? Halb so wild!</h1>
+                                        <p class="font1 white" style="margin-top:10px">Wenn du kurz vor der Finanzkrise 2008 CHF 10,000 investiert hättest, dann wäre dieses
+                                            Investment ein Jahr später nur noch rund CHF 5000 wert gewesen.</p>
+                                        <p class="font1 white" style="margin-top:10px">Grund zur Panik? Nicht wirklich, solange du langfristig denkst! 2013 hättest du die
+                                            Verluste schon wieder wettgemacht. Und heute wäre der Wert des Investments bereits
+                                            bei rund CHF 18,000.</p>
+                                    </div>
+                                    <img src="images/crisis.png" class="lessonOneImg3">
+                                </div>
+
+                                <div class="nextContainer" style="margin-top: 190px;">
+                                    <i-Button class="font1 l4" type="primary" size="large" @click="lessonOneNext">
+                                        <span class="l4">Zu Lektion 2 von 4</span>
+                                    </i-Button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div v-if="activeView.lessonTwo" class="positionAbsolute" key="lesson2">
+                        <div class="header hcenter" style="height: 380px;">
+                            <img src="images/periodic.png" class="lessonTwoImg1">
+                            <div class="standardContainer" style="position: absolute; z-index: 10;">
+                                <div class="backToOB font1" @click="activeView.hideLuna = !activeView.hideLuna" style="position: absolute">Zum Online Banking wechseln</div>
+                            </div>
+                        </div>
+                        <div class="lessonTwoBody hcenter">
+                            <div class="standardContainer">
+                                <div class="lessonTwoHeadline">
+                                    <div class="lessonTag font1 l5">Lektion 2 von 4</div>
+                                    <div class="lessonTwoTitle font2 l1 bold">Der kluge Investor investiert in regelmässigen Zeitabständen.</div>
+                                </div>
+
+                                <div class="lessonTwoLuna">
+                                    <image class="lunaImage" src="/images/luna.png" style="position: absolute; top:0; left: -80;">
+                                        <p class="font1" style="margin-top:10px">Wolltest du in der Vergangenheit schon einmal investieren und hast dann überlegt,
+                                            ob das auch wirklich der richtige Zeitpunkt dafür ist? Dann bist du nicht alleine.</p>
+                                        <p class="font1" style="margin-top:10px">Ich verrate dir nun aber ein Geheimnis: Die kurzfristige Kursentwicklung unterliegt
+                                            komplett dem Zufall und kann von niemandem mit Bestimmtheit vorhergesagt werden.
+                                            Oder anders gesagt, niemand kann dir die Frage nach dem richtigen Zeitpunkt beantworten.</p>
+                                        <p class="font1" style="margin-top:10px">Dieses Dilemma lässt sich aber elegant umgehen, wenn du langfristig denkst und in
+                                            regelmässigen Zeitabständen investierst. Dazu reicht es, einen fixen Betrag festzulegen,
+                                            den du monatlich in ein hochwertiges Portfolio investierst. Dies hat mehrere
+                                            Vorteile, wie du unten lesen kannst.</p>
+                                </div>
+                            </div>
+                            <div class="lessonTwoFullWidth hcenter">
+                                <div class="standardContainer" style="display: flex;">
+                                    <div class="lessonTwoColumn">
+                                        <h1 class="font2 bold white">Eigene Emotionen geschickt kontrollieren.</h1>
+                                        <p class="font1 white" style="margin-top:10px">Dein grösster Gegner beim investieren ist nicht der Markt, sondern deine Emotionen.
+                                            Studien haben nachgewiesen, dass Investoren, die versuchen den richtigen Zeitpunkt
+                                            abzuwarten, im Schnitt schlechter abschneiden, als Investoren die – egal ob der
+                                            Markt hoch oder tief ist – in regelmässig Abständen investieren und die Tiefs
+                                            und Hochs entspannt aussitzen.</p>
+                                        <p class="font1 white" style="margin-top:10px">In regelmässigen Abständen zu investieren ist eine ebenso simple wie effiziente Strategie,
+                                            um deine Emotionen in Schach zu halten und zu verhindern, dass sie dich zu schlechten
+                                            Entscheiden verleiten.</p>
+                                    </div>
+                                    <div class="lessonTwoColumn">
+                                        <h1 class="font2 bold white">Tiefs und Hochs ausgleichen.</h1>
+                                        <p class="font1 white" style="margin-top:10px">Wenn du regelmässig investierst, dann investierst du manchmal zu höheren Preisen
+                                            und manchmal zu tieferen. Im Schnitt gleicht sich das aber aus und du eliminierst
+                                            das Risiko, dann zu investieren, wenn der Markt am teuersten ist.</p>
+                                        <p class="font1 white" style="margin-top:10px">Denn genau das passiert all zu oft, wenn Investoren auf ihre Emotionen hören und
+                                            sich von der allgemeinen Euphorie am Markt anstecken lassen.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="standardContainer">
+                                <div class="nextContainer" style="margin-top: 190px;">
+                                    <i-Button class="font1 l4" type="primary" size="large" @click="lessonTwoNext">
+                                        <span class="l4">Zu Lektion 3 von 4</span>
+                                    </i-Button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div v-if="activeView.lessonThree" class="positionAbsolute" key="lesson3">
+                        <img src="images/books.png" class="lessonThreeImg1">
+                        <div class="hcenter">
+                            <div class="standardContainer" style="position: absolute">
+                                <div class="backToOBAlt font1" @click="activeView.hideLuna = !activeView.hideLuna" style="position: absolute; z-index: 5;">Zum Online Banking wechseln</div>
+                            </div>
+                        </div>
+
+                        <div class="lessonThreeBody hcenter" style="padding-bottom: 0px;">
+                            <div class="standardContainer">
+                                <div class="lessonThreeHeadlineContainer">
+                                    <div class="lessonThreeHeadline">
+                                        <div class="lessonTag font1 l5">Lektion 3 von 4</div>
+                                        <div class="lessonThreeTitle font2 l1 bold">Die Eigenschaften eines erstklassigen Portfolios.</div>
+                                    </div>
+                                    <div class="lessonThreeLuna">
+                                        <image class="lunaImage" src="/images/luna.png" style="position: absolute; top:0; right: -80;">
+                                            <p class="font1">Neben einer langfristigen Strategie hat die Portfoliozusammensetzung – sprich
+                                                die konkreten Aktien, Anleihen und weitere Anlageklassen in welche du investiert
+                                                bist – einen weiteren grossen Einfluss auf die langfristige Entwicklung deiner
+                                                Investitionen.</p>
+                                            <p class="font1" style="margin-top:10px">So wär es zum Beispiel selbst bei einer langfristigen Strategie ungeschickt,
+                                                nur in Aktien einer einzigen Firma zu investieren, denn bei einem Konkurs
+                                                der Firma würde dein Investment wertlos werden.</p>
+                                            <p class="font1" style="margin-top:10px">Die Eigenschaften eines erstklassigen Portfolio lassen sich bildlich gut als
+                                                Schichten darstellen. Die oberste Schicht (Diversifikation) hat die grösste
+                                                Auswirkung auf die Performance deines Portfolios – bei den nachfolgenden
+                                                Schichten ist die Auswirkung nicht mehr ganz so gross. Es summiert sich aber
+                                                schnell einmal und daher sollte keine der Schichten vernachlässigt werden.</p>
+                                    </div>
+                                </div>
+                                <div class="lessonThreeOptimalPortfolio">
+                                    <div class="lessonThreeCol">
+                                        <img src="/images/layers.png" class="lessonThreeLayers">
+                                    </div>
+                                    <div class="lessonThreeCol">
+                                        <div class="lessonThreeCharacteristics">
+                                            <h1 class="font2 l3">Breit Diversifiziert</h1>
+                                            <p class="font1">Um ein Klumpenrisiko vorzubeugen, investieren professionelle Investoren ihr Geld
+                                                über mehrere Anlagekategorien in eine Vielzahl von unterschiedlichen Unternehmen,
+                                                aus verschiedenen Länder und Branchen investieren</p>
+                                        </div>
+                                        <div class="lessonThreeCharacteristics">
+                                            <h1 class="font2 l3">Rigoros Selektioniert</h1>
+                                            <p class="font1">Professionelle Investoren investieren in Qualität – also in Unternehmen die gesunde
+                                                Finanzen vorweisen, über ein starkes Management verfügen, talentierte und
+                                                zufriedene Mitarbeiter beschäftigen und eine klare Strategie für die Zukunft
+                                                haben.</p>
+                                        </div>
+                                        <div class="lessonThreeCharacteristics">
+                                            <h1 class="font2 l3">Zielorientiert</h1>
+                                            <p class="font1">Dein Portfolio sollte sich nach deinen Zielen richten. Wenn du auf deine Pensionierung
+                                                sparst, dann verlangt das nach einer anderen Portfoliozusammensetzung, als
+                                                wenn du zum Beispiel auf den baldigen Kauf einer Immobilie sparst. Mehr dazu
+                                                in Lektion 4.</p>
+                                        </div>
+                                        <div class="lessonThreeCharacteristics">
+                                            <h1 class="font2 l3">Aktiv Verwaltet</h1>
+                                            <p class="font1">Hier trennt sich die Spreu vom Weizen. Die talentiertesten Investoren nutzen
+                                                jahrzehntelange Erfahrung und intelligente Algorithmen um makroökonomische
+                                                Trends (zum Beispiel das Schwächeln einer Branche oder das Erstarken einer
+                                                ganzen Region) aus riesigen Datenmengen frühzeitig zu erkennen, das Portfolio
+                                                anzupassen und zusätzliche Gewinne mitzunehmen.</p>
+                                        </div>
+                                        <div class="lessonThreeCharacteristics">
+                                            <h1 class="font2 l3">Steueroptimiert</h1>
+                                            <p class="font1">Das Gesetzt ermöglicht gewisse Steueroptimierungen (zum Beispiel Säule 3a oder
+                                                gestaffelter Bezug). Mit der automatischen Steueroptimierungen von LunaInvest
+                                                sparst du schnell einmal zehntausende von Franken an Steuerkosten.</p>
+                                        </div>
+                                        <div class="lessonThreeCharacteristics">
+                                            <h1 class="font2 l3">Kostengünstig</h1>
+                                            <p class="font1">Ein erstklassiges Anlageportfolio muss nicht teuer sein. Hohe Gebühren fressen
+                                                deine Gewinne auf und daher lohnt es sich, die Kosten und den Serviceumfang
+                                                eines Anbieters genau zu prüfen.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lessonThreeFullWidth hcenter">
+                                <div class="standardContainer">
+                                    <h1 class="font2 white">Klingt kompliziert? Das ist es auch. Doch dank LunaInvest brauchst du dich keine Sekunde
+                                        damit zu beschäftigen.</h1>
+                                    <h1 class="font2 white" style="margin-top: 20px;">Bei uns erforschen PhD Mathematiker, Physiker und Ökonomen mit jahrzehntelanger Markterfahrung
+                                        laufend noch effizientere Portfoliostrategien. Und dank dem Einsatz intelligenter
+                                        Software zu attraktiven Kosten weit unter dem Marktdurchschnitt.</h1>
+                                    <div class="nextContainer" style="margin-top: 140px; padding-bottom: 70px">
+                                        <i-Button class="font1 l4 white-ghost" type="ghost" size="large" @click="lessonThreeNext">
+                                            <span class="l4">Zu Lektion 4 von 4</span>
+                                        </i-Button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div v-if="activeView.lessonFour" class="positionAbsolute" key="lesson4">
+                        <div class="lessonFourBody hcenter">
+                            <div class="headerAlt" style="height: 70px; position: absolute; top: 0; z-index: 10;">
+                                <div class="standardContainer">
+                                    <div class="backToOBAlt font1" @click="activeView.hideLuna = !activeView.hideLuna">Zum Online Banking wechseln</div>
+                                </div>
+                            </div>
+                            <img class="lessonFourImg1" src="/images/goal.png">
+                            <div class="standardContainer">
+                                <div class="lessonFourHeadline">
+                                    <div class="lessonTag font1 l5">Lektion 4 von 4</div>
+                                    <div class="lessonFourTitle font2 l1 bold">Dein Risikoprofil hängt von deinen Lebenszielen ab.</div>
+                                </div>
+                                <div class="hcenter">
+                                    <img class="lunaImage" src="/images/luna.png" style="margin-bottom: 20px;">
+                                </div>
+                                <div class="hcenter">
+                                    <div class="center font1" style="width: 800px">
+                                        <p>Finanzberater fragen ihre Kunden oft nach ihrer Risikofreudigkeit und versuchen damit
+                                            abzuschätzen, wie viel Risiko das Portfolio eines Kunden ertragen kann. Das Team
+                                            von LunaInvest ist der festen Überzeugung, dass dieser traditionelle Ansatz die
+                                            Bedürfnisse der Kunden nur mangelhaft abdeckt.</p>
+                                        <p style="margin-top:10px">Ein Beispiel? Ein Portfolio mit einem hohen Aktienanteil gilt als riskanter, verspricht
+                                            dafür aber auch eine höhere Rendite. Sollte daher ein besonders risikofreudiger
+                                            Investor nur in Aktien investieren, wenn er das Geld bereits in einem Jahr braucht,
+                                            um seine Hypothek zurückzuzahlen? Auf keinen Fall! Kurzfristig kann ein Aktienportfolio
+                                            starken Schwankungen unterliegen und der Investor läuft Gefahr, die Hypothek
+                                            nicht zurückzahle zu können. Umgekehrt wäre es auch falsch, einer risikoscheuen
+                                            Investorin mit einer langfristen Anlagestrategie zu raten, auf Aktien im Portfolio
+                                            zu verzichten. Langfristig entwickeln sich Aktien sehr stark und das Verlustrisiko
+                                            nimmt Jahr für Jahr ab.</p>
+                                        <p style="margin-top:10px">Du siehst schon vorauf ich hinaus will – die Portfoliozusammensetzung sollte in erster
+                                            Linie von deinen Zielen abhängen. Die zentrale Frage ist:
+                                            <em>Wie viel</em> Geld, benötigst du
+                                            <em>wann</em> und
+                                            <em>wofür</em>?</p>
+                                    </div>
+                                </div>
+                                <div class="hcenter">
+                                    <div class="lessonFourBox">
+                                        <div class="hcenter">
+                                            <div class="l3 font2 center lessonFourStrategies">
+                                                Wir haben die beiden erstklassige Strategien LunaGrowth und LunaConserve entwickelt. Durch unterschiedliche Gewichtung der
+                                                beiden Strategien erreichst du ein Portfolio, das perfekt auf deine finanziellen
+                                                Ziele abgestimmt ist.
+                                            </div>
+                                        </div>
+                                        <div class="hcenter">
+                                            <div class="lessonFourStrategy">
+                                                <img class="lessonFourStrategyImage" src="images/growth.png">
+                                                <div class="font2 l3" style="color: rgb(99, 61, 252)">LunaGrowth<sup>®</sup></div>
+                                                <p class="font1">LunaGrowth setzt sich aus hochwertigen und besonders renditestarken Anlagen
+                                                    zusammen. Kurzfristig sind grössere Schwankungen möglich und daher dient
+                                                    diese Strategie vor allem der langfristige Vermögenbildung.</p>
+                                            </div>
+                                            <div class="lessonFourStrategy">
+                                                <img class="lessonFourStrategyImage" src="images/growth.png">
+                                                <div class="font2 l3" style="color: rgb(254, 153, 99)">LunaConserve<sup>®</sup></div>
+                                                <p class="font1">LunaGrowth setzt sich aus hochwertigen und besonders renditestarken Anlagen
+                                                    zusammen. Kurzfristig sind grössere Schwankungen möglich und daher dient
+                                                    diese Strategie vor allem der langfristige Vermögenbildung.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="hcenter">
+                                    <div style="width: 500px;">
+                                        <div class="l2 font2 center" style="color: rgb(99, 61, 252)">Portfoliozusammensetzung in Abhängigkeit von Zeit und Ziel.</div>
+                                        <p class="center font1" style="margin-top: 10px">Je näher ein Ziel rückt, umso konservativer sollte dein Portfolio aufgebaut sein.
+                                            Wenn du willst, führt Luna die Anpassungen automatisch für dich durch. Du hast
+                                            aber auch die Möglichkeit, deine Portfoliozusammensetzung selbst zu kalibrieren.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lessonFourImg2">
+                                <div class="scenario1Container">
+                                    <div class="font2 l3">Ich spare auf meine Pensionierung
+                                        <br> in 30 Jahren...</div>
+                                    <div class="lessonFourPortfolioStructure">
+                                        <div class="lessonFourWeightProductContainer">
+                                            <div class="font2 l4 bold lessonFourProductTitle" style="color: rgb(99, 61, 252)">LunaGrowth<sup>®</sup></div>
+                                            <div class="font2 l4 lessonFourProductWeight">100%</div>
+                                            <div class="lessonFourBar purple"></div>
+                                        </div>
+                                        <div class="lessonFourWeightProductContainer">
+                                            <div class="font2 l4 bold lessonFourProductTitle" style="color: rgb(254, 153, 99)">LunaConserve<sup>®</sup></div>
+                                            <div class="font2 l4 lessonFourProductWeight">0%</div>
+                                            <div class="lessonFourBar orange" style="width: 5px"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lessonFourImg3">
+                                <div class="scenario2Container">
+                                    <div class="font2 l3">Ich spare auf den Kauf eines
+                                        <br>Eigenheimes in 4 Jahren…</div>
+                                    <div class="lessonFourPortfolioStructure" style="margin-left:30px">
+                                        <div class="lessonFourWeightProductContainer">
+                                            <div class="font2 l4 bold lessonFourProductTitle" style="color: rgb(99, 61, 252)">LunaGrowth<sup>®</sup></div>
+                                            <div class="font2 l4 lessonFourProductWeight">20%</div>
+                                            <div class="lessonFourBar purple" style="width: 64px"></div>
+                                        </div>
+                                        <div class="lessonFourWeightProductContainer">
+                                            <div class="font2 l4 bold lessonFourProductTitle" style="color: rgb(254, 153, 99)">LunaConserve<sup>®</sup></div>
+                                            <div class="font2 l4 lessonFourProductWeight">80%</div>
+                                            <div class="lessonFourBar orange" style="width: 256px"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lessonFourImg4">
+                                <div class="scenario3Container">
+                                    <div class="font2 l3" style="text-align: right">Ich spare auf meine
+                                        <br>Pensionierung in 8 Jahren…</div>
+                                    <div class="lessonFourPortfolioStructure" style="">
+                                        <div class="lessonFourWeightProductContainer">
+                                            <div class="font2 l4 bold lessonFourProductTitle" style="color: rgb(99, 61, 252)">LunaGrowth<sup>®</sup></div>
+                                            <div class="font2 l4 lessonFourProductWeight">50%</div>
+                                            <div class="lessonFourBar purple" style="width: 160px"></div>
+                                        </div>
+                                        <div class="lessonFourWeightProductContainer">
+                                            <div class="font2 l4 bold lessonFourProductTitle" style="color: rgb(254, 153, 99)">LunaConserve<sup>®</sup></div>
+                                            <div class="font2 l4 lessonFourProductWeight">50%</div>
+                                            <div class="lessonFourBar orange" style="width: 160px"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div @click="lessonFourNext" class="hcenter lessonFourBottomBar" :class="{lessonFourBottomBarFixed: controls.lessonFour.bottomReached}">
+                                <div class="font1 l3 white">Mein erstes Ziel auswählen</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div v-if="activeView.firstGoal" class="positionAbsolute" key="firstGoal">
+                        <div class="hcenter">
+                            <div class="standardContainer" style="position: absolute">
+                                <div class="backToOBAlt font1" @click="activeView.hideLuna = !activeView.hideLuna" style="position: absolute; z-index: 5;">Zum Online Banking wechseln</div>
+                            </div>
+                        </div>
+                        <div class="firstGoalBody hcenter">
+                            <div class="standardContainer">
+                                <div class="firstGoalLunaContainer">
+                                    <img class="lunaImage" src="/images/luna.png">
+                                    <div class="font2 l2 bold center" style="margin-top: 20px;">{{ formInline.user }}, wähle dein
+                                        <br>erstes Ziel aus!</div>
+                                    <p class="font1 center" style="margin-top:10px; width: 500px;">Du kannst dein erste Ziel später an deine Bedürfnisse anpassen oder weitere Ziele auswählen.
+                                        Dein Leben ist voller Überraschung und so sind auch die LunaInvest Ziele jederzeit
+                                        anpassbar!</p>
+                                </div>
+                                <div class="font2 l3 white firstGoalSuggestionTitle">
+                                    Empfehlung für dich basierend auf deinen Antworten
+                                </div>
+                                <div class="firstGoalSuggestionContainer">
+                                    <div class="font2 bold l2">Pensionierung</div>
+                                    <p class="font1" style="margin-top:10px;">Spare auf deine Pensionierung. Je früher du mit sparen beginnst, desto grösser ist dein
+                                        Polster bei deiner Pensionierung in rund 38 Jahren. Da deine Pensionierung im Moment
+                                        noch in weiter Ferne liegt, kannst du voll auf Rendite setzten und brauchst dich
+                                        nicht um kurzfristige Marktschwankungen zu sorgen.</p>
+                                    <p class="font1" style="margin-top:10px;">Basierend auf deinen Angaben beträgt dein Sparpotential geschätzt
+                                        <strong>CHF 3’481’000</strong>.</p>
+                                    <div class="firstGoalChooseContainer">
+                                        <div class="lessonFourPortfolioStructure">
+                                            <div class="lessonFourWeightProductContainer">
+                                                <div class="font2 l4 bold lessonFourProductTitle" style="color: rgb(99, 61, 252)">LunaGrowth<sup>®</sup></div>
+                                                <div class="font2 l4 lessonFourProductWeight">100%</div>
+                                                <div class="lessonFourBar purple"></div>
+                                            </div>
+                                            <div class="lessonFourWeightProductContainer">
+                                                <div class="font2 l4 bold lessonFourProductTitle" style="color: rgb(254, 153, 99)">LunaConserve<sup>®</sup></div>
+                                                <div class="font2 l4 lessonFourProductWeight">0%</div>
+                                                <div class="lessonFourBar orange" style="width: 5px"></div>
+                                            </div>
+                                        </div>
+                                        <div class="firstGoalBtnContainer">
+                                            <i-Button class="font1 firstGoalBtn" type="primary" size="large" @click="firstGoalNext">
+                                                <span class="l5">Dieses Ziel auswählen</span>
+                                            </i-Button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="firstGoalCollapse">
+                                    <Collapse v-model="controls.firstGoal.collapse" @on-change="controls.firstGoal.collapsed = !controls.firstGoal.collapsed">
+                                        <Panel name="moreGoals">
+                                            <span v-if="!controls.firstGoal.collapsed">Weitere Ziele anzeigen</span>
+                                            <span v-if="controls.firstGoal.collapsed">Weitere Ziele verbergen</span>
+                                            <div slot="content" class="firstGoalSuggestionContainer">
+                                                <div class="font2 bold l2">Hauskauf</div>
+                                                <p class="font1" style="margin-top:10px;">Spare auf den Kauf deines Traumhauses. Die Portfoliozusammensetzung hängt
+                                                    im wesentlichen davon ab, welchen Zeitplan du dir für das Erreichen dieses
+                                                    Zieles gesetzt hast.</p>
+                                                <div class="firstGoalChooseContainer" style="justify-content: flex-end;">
+                                                    <div class="firstGoalBtnContainer">
+                                                        <i-Button class="font1 firstGoalBtn" type="primary" size="large" @click="notAnOption">
+                                                            <span class="l5">Dieses Ziel auswählen</span>
+                                                        </i-Button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div slot="content" class="firstGoalSuggestionContainer">
+                                                <div class="font2 bold l2">Sicherheitspolster</div>
+                                                <p class="font1" style="margin-top:10px;">Das
+                                                    <em>Sicherheitspolster</em> ist ein besonders konservatives Portfolio und
+                                                    dient als attraktive alternative zum Sparkonto. Dein Geld wird in besonders
+                                                    stabile Anlagen investiert und steht auch für kurzfristige und unvorhergesehene
+                                                    Ausgaben zur Verfügung.</p>
+                                                <div class="firstGoalChooseContainer">
+                                                    <div class="lessonFourPortfolioStructure">
+                                                        <div class="lessonFourWeightProductContainer">
+                                                            <div class="font2 l4 bold lessonFourProductTitle" style="color: rgb(99, 61, 252)">LunaGrowth<sup>®</sup></div>
+                                                            <div class="font2 l4 lessonFourProductWeight">0%</div>
+                                                            <div class="lessonFourBar purple" style="width: 5px"></div>
+                                                        </div>
+                                                        <div class="lessonFourWeightProductContainer">
+                                                            <div class="font2 l4 bold lessonFourProductTitle" style="color: rgb(254, 153, 99)">LunaConserve<sup>®</sup></div>
+                                                            <div class="font2 l4 lessonFourProductWeight">100%</div>
+                                                            <div class="lessonFourBar orange"></div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="firstGoalBtnContainer">
+                                                        <i-Button class="font1 firstGoalBtn" type="primary" size="large" @click="notAnOption">
+                                                            <span class="l5">Dieses Ziel auswählen</span>
+                                                        </i-Button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div slot="content" class="firstGoalSuggestionContainer">
+                                                <div class="font2 bold l2">Generelles Investment</div>
+                                                <p class="font1" style="margin-top:10px;">Vermehre dein Vermögen über die Zeit. Dies ist ein grossartiges Ziel für
+                                                    ungewisse zukünftige Bedürfnisse oder Geld, das du an deine Nachkommen
+                                                    weitergeben möchtest.</p>
+                                                <div class="firstGoalChooseContainer">
+                                                    <div class="lessonFourPortfolioStructure">
+                                                        <div class="lessonFourWeightProductContainer">
+                                                            <div class="font2 l4 bold lessonFourProductTitle" style="color: rgb(99, 61, 252)">LunaGrowth<sup>®</sup></div>
+                                                            <div class="font2 l4 lessonFourProductWeight">100%</div>
+                                                            <div class="lessonFourBar purple"></div>
+                                                        </div>
+                                                        <div class="lessonFourWeightProductContainer">
+                                                            <div class="font2 l4 bold lessonFourProductTitle" style="color: rgb(254, 153, 99)">LunaConserve<sup>®</sup></div>
+                                                            <div class="font2 l4 lessonFourProductWeight">0%</div>
+                                                            <div class="lessonFourBar orange" style="width: 5px"></div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="firstGoalBtnContainer">
+                                                        <i-Button class="font1 firstGoalBtn" type="primary" size="large" @click="notAnOption">
+                                                            <span class="l5">Dieses Ziel auswählen</span>
+                                                        </i-Button>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </Panel>
+                                    </Collapse>
+                                </div>
+                            </div>
+                        </div>
+                        <div v-if="activeView.loadingDashboard" class="positionAbsolute">
+                            <div class="loadingDashboardBody">
+                                <div class="loadingDashboardLunaContainer">
+                                    <img class="lunaImage" src="/images/luna.png">
+                                    <div class="font2 l2 bold center" style="margin-top: 50px; width: 700px;">Einen Moment {{ formInline.user }}, ich erstellen eben dein persönliches LunaInvest Dashboard
+                                        mit deinem ersten Ziel.</div>
+                                    <div class="customSpin">
+                                        <Spin size="large"></Spin>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div v-if="activeView.dashboard" class="positionAbsolute" key="dashboard">
+                        <div class="dashboardHeader">
+                            <div class="standardContainer" style="height: 100%">
+                                <div class="BackToOB font1" @click="activeView.hideLuna = !activeView.hideLuna" style="bottom: 8; top: auto">Zum Online Banking wechseln</div>
+                                <div class="dashboardMenu font1">
+                                    <div class="dashboardMenuItem semi-bold">Übersicht</div>
+                                    <div class="dashboardMenuItem" @click="notInDemo">Portfolio</div>
+                                    <div class="dashboardMenuItem" @click="notInDemo">Performance</div>
+                                    <div class="dashboardMenuItem" @click="notInDemo">Häufige Fragen</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dashboardBody">
+                            <div class="standardContainer">
+                                <div class="dashboardSummaryContainer">
+                                    <div class="dashboardSummaryElement">
+                                        <div class="font1">Total Portfoliowert</div>
+                                        <div class="font1 bold l4">CHF 0</div>
+                                    </div>
+                                    <div class="dashboardSummaryElement" style="border-left: solid 1px #ebebeb">
+                                        <div class="font1">Total Sparbetrag</div>
+                                        <div class="font1 bold l4">CHF {{monthlyInvestment.amountFinal}} / Monat</div>
+                                    </div>
+                                    <div class="dashboardSummaryElement" style="border-left: solid 1px #ebebeb">
+                                        <div class="font1">Total Gewinn/Verlust</div>
+                                        <div class="font1 bold l4">CHF 0</div>
+                                    </div>
+                                </div>
+                                <div v-if="!controls.setAmount.amountSet" class="loadingDashboardLunaContainer">
+                                    <img class="lunaImage" src="/images/luna.png">
+                                    <div class="font2 l5 bold center" style="margin-top: 30px; margin-bottom: 10px; width: 700px;">Willkommen {{ formInline.user }}! Das ist dein persönliches LunaInvest Dashboard. Von
+                                        hier aus kannst du deine LunaInvest Ziele und Investments jederzeit verfolgen und
+                                        anpassen.</div>
+                                    <div class="font2 l5 bold center" style="margin-bottom: 50px; width: 700px;">Als ersten Schritt empfehle ich dir, dein Ziel "Pensionierung mit 65" zu vervollständigen
+                                        und einen Sparbetrag einzurichten.</div>
+                                </div>
+                                <div class="dashboardGoalsTitle">
+                                    <div class="font1 bold l3">Deine Ziele</div>
+                                    <div class="dashboardAddGoal font1" @click="notInDemo">Ziel hinzufügen</div>
+                                </div>
+                                <div class="dashboardGoalContainer" @click="editGoal">
+                                    <div class="dashboarGoalContent">
+                                        <img src="/images/beach.PNG" class="dashboardGoalImg1">
+                                        <div class="dashboardGoalTitle font1 l4 bold">Pensionierung mit {{30 + goalSimulation.investmentHorizon}}</div>
+                                        <div class="dashboardGoalDetails">
+                                            <div class="dashboardGoalAssets">
+                                                <div class="font1">Portfoliowert</div>
+                                                <div class="font1 l4 semi-bold">CHF 0</div>
+                                                <i-Button v-if="!controls.setAmount.amountSet" class="font1" type="primary" size="large" @click="editGoal" style="margin-top: 30px;">Ziel vervollständigen</i-Button>
+                                            </div>
+                                            <div class="dashboardGoalSave">
+                                                <div class="font1">Monatlicher Sparbetrag</div>
+                                                <div class="font1 l4 semi-bold">CHF {{monthlyInvestment.amountFinal}} / Monat</div>
+                                            </div>
+                                            <div class="dashboardGoalPortfolio">
+                                                <div class="dashboardChartContainer">
+                                                    <doughnut-chart :chart-data="portfolioChart" style="height: 60"></doughnut-chart>
+                                                </div>
+                                                <div class="dashboardChartLabels">
+                                                    <div class="lessonFourWeightProductContainer">
+                                                        <div class="font2 l5 bold lessonFourProductTitle" style="color: rgb(99, 61, 252); width: 125px">LunaGrowth<sup>®</sup></div>
+                                                        <div class="font2 l5 lessonFourProductWeight">100%</div>
+                                                    </div>
+                                                    <div class="lessonFourWeightProductContainer">
+                                                        <div class="font2 l5 bold lessonFourProductTitle" style="color: rgb(254, 153, 99); width: 125px">LunaConserve<sup>®</sup></div>
+                                                        <div class="font2 l5 lessonFourProductWeight">0%</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="font1 bold l3">Deine Kontos</div>
+                                <div class="dashboardAccountsContainer">
+                                    <div class="font1">Credit Suisse Bonviva Silver</div>
+                                    <div class="font1 semi-bold">CHF 43,200</div>
+                                </div>
+                                <div class="dashboardAccountsContainer">
+                                    <div class="font1">Credit Suisse Sparkonto</div>
+                                    <div class="font1 semi-bold">CHF 63,621</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div v-if="activeView.editGoal" class="positionAbsolute editGoal-overflow" :class="{hideOverflow: activeView.setSavingAmountOverlay}"
+                        key="editGoal">
+                        <div class="dashboardHeader">
+                            <div class="standardContainer" style="height: 100%">
+                                <div class="BackToOB font1" @click="activeView.hideLuna = !activeView.hideLuna" style="bottom: 8; top: auto">Zum Online Banking wechseln</div>
+                                <div class="dashboardMenu font1">
+                                    <div class="dashboardMenuItem" @click="toDashboard">Übersicht</div>
+                                    <div class="dashboardMenuItem" @click="notInDemo">Portfolio</div>
+                                    <div class="dashboardMenuItem" @click="notInDemo">Performance</div>
+                                    <div class="dashboardMenuItem" @click="notInDemo">Häufige Fragen</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="editGoalFullWidth hcenter">
+                            <div class="standardContainer" style="height: 100%">
+                                <div class="editGoalMenuTitle font1 bold l3">
+                                    <img src="/images/beach.PNG" class="editGoalImg1"> Pensionierung mit {{30 + goalSimulation.investmentHorizon}}
+                                </div>
+                                <div class="editGoalMenu font1">
+                                    <div class="editGoalMenuItem font1 semi-bold " @click="">Zusammenfassung</div>
+                                    <div class="editGoalMenuItem font1" @click="notInDemo">Kontos</div>
+                                    <div class="editGoalMenuItem font1" @click="notInDemo">Performance</div>
+                                    <div class="editGoalMenuItem font1" @click="notInDemo">Portfolio</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dashboardBody">
+                            <div class="standardContainer editGoal-container">
+                                <div class="editGoal-overviewCol">
+                                    <div class="editGoal-overviewItem" style="border-bottom: solid 1px #ebebeb">
+                                        <div class="font1">Zieltyp</div>
+                                        <div class="font1 l4 semi-bold">Pensionierung</div>
+                                    </div>
+                                    <div class="editGoal-overviewItem" style="border-bottom: solid 1px #ebebeb">
+                                        <div class="font1">Portfoliowert</div>
+                                        <div class="font1 l4 semi-bold">CHF 0</div>
+                                    </div>
+                                    <div class="editGoal-overviewItem" style="border-bottom: solid 1px #ebebeb">
+                                        <div class="font1">Sparbetrag</div>
+                                        <div class="font1 l4 semi-bold">CHF {{monthlyInvestment.amountFinal}} / Monat</div>
+                                    </div>
+                                    <div class="editGoal-overviewItem">
+                                        <div class="font1">Portfoliozusammensetzung</div>
+                                        <div class="editGoal-Portfolio">
+                                            <div class="editGoal-PortfolioChartContainer">
+                                                <doughnut-chart :chart-data="portfolioChart" style="height: 45"></doughnut-chart>
+                                            </div>
+                                            <div class="editGoal-PortfolioChartLabels">
+                                                <div class="lessonFourWeightProductContainer">
+                                                    <div class="font2 bold lessonFourProductTitle" style="color: rgb(99, 61, 252); width: 85px">LunaGrowth<sup>®</sup></div>
+                                                    <div class="font2 lessonFourProductWeight">100%</div>
+                                                </div>
+                                                <div class="lessonFourWeightProductContainer">
+                                                    <div class="font2 bold lessonFourProductTitle" style="color: rgb(254, 153, 99); width: 85px">LunaConserve<sup>®</sup></div>
+                                                    <div class="font2 lessonFourProductWeight">0%</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="editGoal-stepsCol">
+                                    <div class="editGoal-stepContainer">
+                                        <div v-if="goalSimulation.editing" class="editGoal-stepTitle font1 bold l4">Schritt 1: Simulation und Zielsetzung</div>
+                                        <div v-if="!goalSimulation.editing" class="editGoal-stepTitle font1 bold l4">
+                                            <div>Dein Ziel</div>
+                                            <i-Button class="font1" type="primary" size="large" @click="notInDemo" style="">Ziel anpassen</i-Button>
+                                        </div>
+                                        <div v-if="goalSimulation.editing" class="editGoal-chartControls">
+                                            <div class="editGoal-chartControl">
+                                                <div class="font1 semi-bold" style="margin-bottom: 10px;">Monatlicher Sparbetrag</div>
+                                                <div style="width:120px">
+                                                    <i-Input v-model="goalSimulation.monthlyInvestment">
+                                                        <span slot="prepend">CHF</span>
+                                                    </i-Input>
+                                                </div>
+                                                <div class="">
+                                                    <Slider v-model="goalSimulation.monthlyInvestment" :min="0" :max="10000" :step="100"></Slider>
+                                                </div>
+                                            </div>
+                                            <div class="editGoal-chartControl">
+                                                <div class="font1 semi-bold" style="margin-bottom: 10px;">Einmalige Einzahlung</div>
+                                                <div style="width:120px">
+                                                    <i-Input v-model="goalSimulation.initialInvestment">
+                                                        <span slot="prepend">CHF</span>
+                                                    </i-Input>
+                                                </div>
+                                            </div>
+                                            <div class="editGoal-chartControl" style="width: 17%">
+                                                <div class="font1 semi-bold" style="margin-bottom: 10px;">Zeit</div>
+                                                <Slider v-model="goalSimulation.investmentHorizon" :min="5" :max="40" :tip-format="yearFormat"></Slider>
+                                                (Pensionierung mit {{30 + goalSimulation.investmentHorizon}})
+                                            </div>
+                                            <div class="editGoal-chartControl" style="width: 27%">
+                                                <div class="font1 semi-bold" style="margin-bottom: 10px;">Portfoliozusammensetzung</div>
+                                                <div class="editGoal-Portfolio">
+                                                    <div class="editGoal-PortfolioChartContainer">
+                                                        <doughnut-chart :chart-data="portfolioSimulation" style="height: 45"></doughnut-chart>
+                                                    </div>
+                                                    <div class="editGoal-PortfolioChartLabels">
+                                                        <div class="lessonFourWeightProductContainer">
+                                                            <div class="font2 bold lessonFourProductTitle" style="color: rgb(99, 61, 252); width: 80px">LunaGrowth<sup>®</sup></div>
+                                                            <div class="font2 lessonFourProductWeight">{{goalSimulation.proportion}}%</div>
+                                                        </div>
+                                                        <div class="lessonFourWeightProductContainer">
+                                                            <div class="font2 bold lessonFourProductTitle" style="color: rgb(254, 153, 99); width: 80px">LunaConserve<sup>®</sup></div>
+                                                            <div class="font2 lessonFourProductWeight">{{100 - goalSimulation.proportion}}%</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <Slider v-model="goalSimulation.proportion" style="width: 80%;"></Slider>
+                                            </div>
+                                        </div>
+                                        <div v-if="goalSimulation.editing" class="font1 semi-bold" style="margin-bottom: 10px;">
+                                            <span>Dynamischer Sparbetrag</span>
+                                            <Tooltip placement="right">
+                                                <Icon type="information-circled" style="font-size: 15px; margin-left: 5px;"></Icon>
+                                                <div slot="content">
+                                                    <p style="white-space: normal">Steigt dein Lohn, so wirst du vermutlicher auch mehr auf die Seite legen
+                                                        können. Falls der dynamische Sparbetrag aktiviert ist, dann erhöht
+                                                        sich der Sparbetrag in der Simulation um jährlich 2%.</p>
+                                                </div>
+                                            </Tooltip>
+                                            <i-Switch v-model="goalSimulation.periodicIncrease" size="small" style="margin-left: 10px"></i-Switch>
+                                        </div>
+                                        <div v-if="goalSimulation.editing" class="editGoal-simulationContainer">
+                                            <div class="font1 bold l3">CHF {{ roundAndFormat(performanceSimulation.datasets[0].data[goalSimulation.investmentHorizon - 1]) }}</div>
+                                            <div class="font1">So viel könnte dein Portfolio unter diesen Annahmen bei deiner Pensionierung
+                                                mit {{30 + goalSimulation.investmentHorizon}} wert sein.</div>
+                                        </div>
+                                        <div v-if="!goalSimulation.editing" class="editGoal-simulationContainer">
+                                            <div class="font1 bold l3">CHF {{ roundAndFormat(performanceSimulation.datasets[0].data[goalSimulation.investmentHorizon - 1]) }} im Alter von {{30 + goalSimulation.investmentHorizon}}</div>
+                                        </div>
+                                        <line-chart :chart-data="performanceSimulation" :options="'Dein Alter'" style="height: 350px"></line-chart>
+                                        <div v-if="goalSimulation.editing">
+                                            <div class="hcenter">
+                                                <i-Button class="font1" type="primary" size="large" @click="setGoal" style="margin-top: 30px;">
+                                                    <span class="l5">CHF {{ roundAndFormat(performanceSimulation.datasets[0].data[goalSimulation.investmentHorizon - 1]) }} als finanzielles Ziel für meine Pensionierung festlegen</span>
+                                                </i-Button>
+                                            </div>
+                                            <div class="hcenter font1" style="margin-top: 10px;">
+                                                (Die Zielsetzung dient nur zur Veranschaulichung und kann jederzeit geändert werden. Es wird dadurch kein Geld investiert.)
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="editGoal-stepContainer">
+                                        <div v-if="!controls.setAmount.amountSet">
+                                            <div class="editGoal-stepTitle font1 bold l4">Schritt 2: Monatlicher Sparbetrag</div>
+                                            <p class="font1" style="margin-top: 10px;">Um dein Ziel zu erreichen, solltest du monatlich mindestens CHF {{goalSimulation.monthlyInvestment}}
+                                                sparen.</p>
+                                            <i-Button class="font1" type="primary" size="large" @click="setAmount_1" style="margin-top: 30px;">
+                                                <span class="">Monatlichen Sparbetrag einrichten</span>
+                                            </i-Button>
+                                        </div>
+                                        <div v-if="controls.setAmount.amountSet">
+                                            <div class="editGoal-stepTitle font1 bold l4">Du sparst monatlich CHF {{monthlyInvestment.amountFinal}} auf dein Ziel.</div>
+                                            <i-Button class="font1" type="primary" size="large" @click="notInDemo" style="margin-top: 30px;">
+                                                <span class="">Monatlichen Sparbetrag ändern</span>
+                                            </i-Button>
+                                        </div>
+                                    </div>
+                                    <div class="editGoal-stepContainer">
+                                        <div class="editGoal-stepTitle font1 bold l4">Schritt 3: Einmalige Einzahlung</div>
+                                        <p class="font1" style="margin-top: 10px;">Um dein Ziel zu erreichen, solltest du eine einmalige Einzahlung von CHF {{format(goalSimulation.initialInvestment)}}
+                                            in dieses Portfolio tätigen.</p>
+                                        <i-Button class="font1" type="primary" size="large" @click="notInDemo" style="margin-top: 30px;">
+                                            <span class="">Einmalige Einzahlung tätigen</span>
+                                        </i-Button>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </transition-group>
+
+                <transition name="modalAnimation" enter-active-class="animated zoomIn" leave-active-class="animated fadeOut" mode="out-in">
+                    <div v-if="activeView.setSavingAmountOverlay" class="modalContainer" key="overlay" style="position: relative;">
+                        <div class="setAmount-modal">
+                            <i-Progress class="setAmount-progress" :percent="controls.setAmount.progress" :stroke-width="5" hide-info></i-Progress>
+                            <div class="font2 l2 bold setAmout-title">Monatlichen Sparbetrag einrichten</div>
+
+                            <transition-group name="modalAnimation" enter-active-class="animated fadeIn" leave-active-class="animated fadeOut" style="position: relative; width: 100%"
+                                tag="div">
+                                <div v-if="activeView.setAmount" class="setAmount-dynamicContent" key="amount">
+                                    <div class="setAmount-question">
+                                        <div class="font1 l5 semi-bold" style="margin-top: 50px">Wie viel möchtest du monatlich für dein Ziel «Pensionierung mit {{30 + goalSimulation.investmentHorizon}}»
+                                            sparen?</div>
+                                        <div style="display: flex; align-items: center;">
+                                            <div style="width:120px;">
+                                                <i-Input v-model="monthlyInvestment.amount">
+                                                    <span slot="prepend">CHF</span>
+                                                </i-Input>
+                                            </div>
+                                            <div style="margin-left: 15px;">/ Monat</div>
+                                        </div>
+                                        <p class="font1" style="margin-top: 10px;">Um dein Ziel zu erreichen, solltest monatlich mindestens {{goalSimulation.monthlyInvestment}}
+                                            Franken sparen.</p>
+                                    </div>
+                                    <div class="setAmount-question">
+                                        <div class="font1 l5 semi-bold">Von welchem Konto soll der Sparbetrag monatlich abgehoben werden?</div>
+                                        <Radio-Group v-model="monthlyInvestment.account" vertical>
+                                            <Radio label="Credit Suisse Bonviva Silver">
+                                                <span>Credit Suisse Bonviva Silver (CHF 43’200)</span>
+                                            </Radio>
+                                            <Radio label="Credit Suisse Sparkonto">
+                                                <span>Credit Suisse Sparkonto (CHF 63,621)</span>
+                                            </Radio>
+                                        </Radio-Group>
+                                    </div>
+                                    <div class="setAmount-next">
+                                        <i-Button class="font1" type="primary" size="large" @click="setAmount_2">
+                                            <span class="">Weiter</span>
+                                        </i-Button>
+                                    </div>
+                                </div>
+
+                                <div v-if="activeView.pillar3a" class="setAmount-dynamicContent" key="pillar3a">
+                                    <div class="font1 l4 bold" style="color: rgb(99, 61, 252); margin-top: 50px;">CHF 64,412 Steuern sparen dank Säule 3a</div>
+                                    <p class="font1" style="margin-top: 10px;">Beim sparen auf deine Pensionierung lohnt es sich, die Steuervorteile der Säule 3a voll
+                                        auszunutzen. Mit LunaInvest hast du die Möglichkeit, ein Teil deines monatlichen
+                                        Sparbetrages auf eine Säule-3a-Konto-Lösung einzuzahlen. Die Anlagestrategie bleibt
+                                        dieselbe, doch sparst du damit über die Jahr nach heutigen Annahmen bis zu CHF 64,412
+                                        an Steuern.</p>
+                                    <p class="font1 semi-bold" style="margin-top: 30px; color: rgb(99, 61, 252)">Bitte überprüfe kurz folgende Angaben, die du in der Vergangenheit gemacht hast. Die
+                                        Vollständigkeit der Angaben hilft uns, eine optimale Empfehlung an dich abzugeben.</p>
+                                    <div class="setAmount-question">
+                                        <div class="font1 l5 semi-bold">Ich zahle bereits Beiträge in die Säule 3a:</div>
+                                        <Radio-Group v-model="answers.säule3a" @on-change="" vertical>
+                                            <Radio label="Ja">
+                                                <span>Ja</span>
+                                            </Radio>
+                                            <Radio label="Nein">
+                                                <span>Nein</span>
+                                            </Radio>
+                                        </Radio-Group>
+                                    </div>
+                                    <div class="setAmount-question">
+                                        <div class="font1 l5 semi-bold">Meine monatliche Einzahlung in die Säule 3a beträgt:</div>
+                                        <div style="display: flex; align-items: center;">
+                                            <div style="width:120px;">
+                                                <i-Input v-model="answers.betrag3a" :placeholder="answers.betrag3a" :number="true" type="number" size="large">
+                                                    <span slot="prepend">CHF</span>
+                                                </i-Input>
+                                            </div>
+                                            <div style="margin-left: 15px;">/ Monat</div>
+                                        </div>
+                                        <Radio-Group v-model="answers.betrag3a" vertical>
+                                            <Radio label="564">
+                                                <span>Monatlicher Maximalbetrag (CHF 564)</span>
+                                            </Radio>
+                                        </Radio-Group>
+                                    </div>
+                                    <div class="setAmount-next">
+                                        <i-Button class="font1" type="primary" size="large" @click="setAmount_3">
+                                            <span class="">Weiter</span>
+                                        </i-Button>
+                                    </div>
+                                </div>
+
+                                <div v-if="activeView.pillar3aResults" class="setAmount-dynamicContent" key="pillar3aResults">
+                                    <div class="font1 bold l4" style="color: rgb(99, 61, 252); margin-top:50px;">{{formInline.user}}, hier ist unsere Empfehlung für dich!</div>
+                                    <p class="font1" style="margin-top: 10px;">Momentan nutzt du die Vorzüge der Säule 3a nicht vollständig aus. LunaInvest empfiehlt
+                                        dir, monatlich jeweils CHF {{564 - answers.betrag3a}} deines totalen Sparbetrages
+                                        von CHF {{monthlyInvestment.amount}} in die LunaInvest Säule-3a-Konto-Lösung einzuzahlen,
+                                        um noch mehr Steuer zu sparen.</p>
+                                    <div class="setAmount-question">
+                                        <div class="font1 l5 semi-bold">So viel möchte ich monatlich in die LunaInvest Säule-3a-Konto-Lösung einzahlen:</div>
+                                        <div style="display: flex; align-items: center;">
+                                            <div style="width:120px;">
+                                                <i-Input v-model="monthlyInvestment.säule3a" :placeholder="monthlyInvestment.säule3a" :number="true" type="number" size="large">
+                                                    <span slot="prepend">CHF</span>
+                                                </i-Input>
+                                            </div>
+                                            <div style="margin-left: 15px;">/ Monat</div>
+                                        </div>
+                                        <Radio-Group v-model="monthlyInvestment.säule3a" vertical>
+                                            <Radio v-model="monthlyInvestment.säule3a" :label="(564 - answers.betrag3a).toString()">
+                                                <span>Empfohlener Betrag (CHF {{564 - answers.betrag3a}})</span>
+                                            </Radio>
+                                        </Radio-Group>
+                                    </div>
+                                    <div class="setAmount-question">
+                                        <div class="font1 l5 semi-bold">
+                                            <span>Anzahl Säule-3a-Kontos</span>
+                                            <Tooltip placement="right">
+                                                <Icon type="information-circled" style="font-size: 15px; margin-left: 5px;"></Icon>
+                                                <div slot="content">
+                                                    <p style="white-space: normal">Deine Säule 3a Einzahlungen mit LunaInvest werden automatisch auf drei
+                                                        separate 3. Säule Kontos verteilt. Damit hast du später einmal die
+                                                        Möglichkeit, die Kontos gestaffelt aufzulösen und weitere Steuern
+                                                        zu sparen. Nachteile ergeben sich keine für dich. Mehr Infos zu diesem
+                                                        Thema findest du hier.</p>
+                                                </div>
+                                            </Tooltip>
+
+                                        </div>
+                                        <Radio-Group vertical v-model="monthlyInvestment.numberOfAccounts">
+                                            <Radio label="3" disabled>
+                                                <span>3</span>
+                                            </Radio>
+                                        </Radio-Group>
+                                    </div>
+                                    <div class="setAmount-next">
+                                        <i-Button class="font1" type="primary" size="large" @click="setAmount_4">
+                                            <span class="">Weiter</span>
+                                        </i-Button>
+                                    </div>
+                                </div>
+
+                                <div v-if="activeView.checkInputs" class="setAmount-dynamicContent" key="checkInputs">
+                                    <div class="font1 bold l4" style="color: rgb(99, 61, 252); margin-top:50px; margin-bottom: 30px">Fast geschafft! Stimmen diese Angaben so?</div>
+                                    <div class="setAmount-checkContainer" style="border-top: solid 1px #495060;">
+                                        <div class="font1">Sparbetrag Total</div>
+                                        <div class="font1 l4 semi-bold">CHF {{monthlyInvestment.amount}} / Monat</div>
+                                    </div>
+                                    <div class="setAmount-checkContainer">
+                                        <div class="font1">davon in Säule-3a-Konto-Lösung</div>
+                                        <div class="font1 l4 semi-bold">CHF {{monthlyInvestment.säule3a}} / Monat</div>
+                                    </div>
+                                    <div class="setAmount-checkContainer">
+                                        <div class="font1">Dein Sparbetrag wird von folgendem Konto bezogen:</div>
+                                        <div class="font1 l4 semi-bold">{{monthlyInvestment.account}}</div>
+                                    </div>
+                                    <div class="setAmount-next">
+                                        <i-Button class="font1" type="primary" size="large" @click="setAmount_5">
+                                            <span class="">Bestätigen</span>
+                                        </i-Button>
+                                    </div>
+                                </div>
+
+                            </transition-group>
+                        </div>
+
+                    </div>
+                </transition>
+
+
+
+            </div>
+        </transition-group>
+
+
+    </div>
+</body>
+
+</html>
+
+
+<!-- 
+
+<div></div>
+v-if=""
+v-for="" 
+
+-->
