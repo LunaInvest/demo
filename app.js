@@ -101,7 +101,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 },
             },
             formInline: {
-                user: 'Fabio',
+                user: '',
                 password: 'luna',
                 age: 30
             },
