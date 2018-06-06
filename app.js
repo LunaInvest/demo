@@ -2,6 +2,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     var snd = new Audio("assets/notification.mp3");
 
+    
+
     Vue.component('line-chart', {
         extends: VueChartJs.Line,
         mixins: [VueChartJs.mixins.reactiveProp],
@@ -799,6 +801,9 @@ document.addEventListener('DOMContentLoaded', function () {
             },
             setAmountProgress() {
                 this.controls.setAmount.progress += 1/4 * 100;
+            },
+            testalert() {
+                alert('Test OK');
             }
         },
         created () {
