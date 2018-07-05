@@ -23,7 +23,14 @@
 </head>
 
 <body style="position: relative;">
-    <div id="app">
+
+    <div class="hideOnLargeScreen">
+        <div class="mobileBody">
+            <div class="bold font1 l3 white">Ups, die grösse deines Bildschirmes scheint zu niedrig zu sein... :(</div>
+            <div class="font1 l5 white" style="margin-top: 30px">Die LunaInvest Demo wurde nicht für kleine Bildschirmgrössen optimiert (z.B. Smartphone). Bitte öffne die Seite auf einem Laptop oder Desktop-PC mit genügend grosser Bildschirmauflösung.</div>
+        </div>
+    </div>
+    <div id="app" class="hideOnSmallScreen">
 
         <transition-group name="switch-OB-Luna" enter-active-class="animated slideInUp" leave-active-class="animated slideOutDown"  ag="div" mode="out-in">
             
@@ -37,7 +44,34 @@
 
             <div v-if="!activeView.hideLuna" class="supercontainer" key="showLuna">
                 <transition name="custom-classes-transition" leave-active-class="animated fadeOut">
-                    <div v-if="activeView.welcome" class="welcomeContainer" key="welcome">
+                    <div v-if="activeView.welcome" class="welcomeBody" key="welcome">
+                        <div class="welcomeContainer">
+                            <div class="font2 bold white l1">LunaInvest Demo</div>
+                            <p class="font1 white" style="margin-top: 10px;">LunaInvest ist ein smarter Investment Bot, der "Goal Based Investing" ermöglichen soll und sich idealerweise nahtlos in die bestehende Online-Banking-Lösung einer Bank einfügt.</p>
+                            <p class="font1 white" style="margin-top: 10px;">In dieser Demo wird exemplarisch das Online-Banking der Credit Suisse verwendet. Die Demo hat zum Ziel, die Möglichkeiten einer solchen Lösung aufzuzeigen. Bitte beachte jedoch, dass die Empfehlungen von LunaInvest in dieser Demo grösstenteils statisch und daher in der Regel nicht auf deine wahren Bedürfnisse zugeschnitten sind.</p>
+                            <p class="font1 white" style="margin-top: 10px; margin-bottom: 30px;"><span class="semi-bold">Bist du bereit?</span> Um loszulegen benötigt LunaInvest lediglich deinen Vornamen, dein Alter, sowie den geheimen Zugangscode zur Demo.</p>
+                            <div>
+                                <i-Form ref="formInline" :model="formInline" :rules="ruleInline">
+                                    <Form-Item prop="user">
+                                        <i-Input type="text" v-model="formInline.user" placeholder="Vorname" size="large">
+                                        </i-Input>
+                                    </Form-Item>
+                                    <Form-Item prop="age">
+                                        <i-Input v-model="formInline.age" placeholder="Alter" size="large" number>
+                                        </i-Input>
+                                    </Form-Item>
+                                    <Form-Item prop="password">
+                                        <i-Input type="password" v-model="formInline.password" placeholder="Demo Zugangscode" size="large">
+                                        </i-Input>
+                                    </Form-Item>
+                                    <Form-Item>
+                                        <i-Button type="primary" @click="welcomePageHandleSubmit('formInline', formInline.password)" size="large">Demo starten</i-Button>
+                                    </Form-Item>
+                                </i-Form>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- <div v-if="activeView.welcome" class="welcomeContainer" key="welcome">
                         <h1 class="font2 white">Willkommen zur LunaInvest Demo</h1>
                         <div>
                             <i-Form ref="formInline" :model="formInline" :rules="ruleInline" inline>
@@ -54,7 +88,7 @@
                                 </Form-Item>
                             </i-Form>
                         </div>
-                    </div>
+                    </div> -->
                 </transition>
 
                 <transition name="modalAnimation" enter-active-class="animated zoomIn" leave-active-class="animated fadeOut" mode="out-in">
@@ -231,13 +265,11 @@
                                                 <div class="getStartedR">
                                                     <div class="font1 xs">Wert deines Investments nach {{getStartedParameters.investmentHorizon}}
                                                         Jahren</div>
-                                                    <div class="font1 font1 l4 bold" style="color: rgb(99, 61, 252)">CHF {{ roundAndFormat(getStartedChart.datasets[1].data[getStartedParameters.investmentHorizon
-                                                        - 1]) }}</div>
+                                                    <div class="font1 font1 l4 bold" style="color: rgb(99, 61, 252)">CHF {{ roundAndFormat(getStartedChart.datasets[1].data[getStartedParameters.investmentHorizon]) }}</div>
                                                 </div>
                                                 <div class="getStartedL">
                                                     <div class="font1 xs">Wert falls das Geld nicht investiert wird</div>
-                                                    <div class="font1 l4 bold" style="color: rgb(255, 99, 132)">CHF {{ roundAndFormat(getStartedChart.datasets[0].data[getStartedParameters.investmentHorizon
-                                                        - 1]) }}</div>
+                                                    <div class="font1 l4 bold" style="color: rgb(255, 99, 132)">CHF {{ roundAndFormat(getStartedChart.datasets[0].data[getStartedParameters.investmentHorizon]) }}</div>
                                                 </div>
                                             </div>
                                             <line-chart :chart-data="getStartedChart" :options="'Zeit in Jahren'" style="height: 350px"></line-chart>
@@ -850,11 +882,11 @@
                                 <div class="firstGoalSuggestionContainer">
                                     <div class="font2 bold l2">Pensionierung</div>
                                     <p class="font1" style="margin-top:10px;">Spare auf deine Pensionierung. Je früher du mit sparen beginnst, desto grösser ist dein
-                                        Polster bei deiner Pensionierung in rund 38 Jahren. Da deine Pensionierung im Moment
+                                        Polster bei deiner Pensionierung in rund {{ yearsToRetirement }} Jahren. Da deine Pensionierung im Moment
                                         noch in weiter Ferne liegt, kannst du voll auf Rendite setzten und brauchst dich
                                         nicht um kurzfristige Marktschwankungen zu sorgen.</p>
                                     <p class="font1" style="margin-top:10px;">Basierend auf deinen Angaben beträgt dein Sparpotential geschätzt
-                                        <strong>CHF 3’481’000</strong>.</p>
+                                        <strong>CHF {{ getStartedResults.luna }}</strong>.</p>
                                     <div class="firstGoalChooseContainer">
                                         <div class="lessonFourPortfolioStructure">
                                             <div class="lessonFourWeightProductContainer">
@@ -1066,7 +1098,7 @@
                         <div class="editGoalFullWidth hcenter">
                             <div class="standardContainer" style="height: 100%">
                                 <div class="editGoalMenuTitle font1 bold l3">
-                                    <img src="images/beach.png" class="editGoalImg1"> Pensionierung mit {{30 + goalSimulation.investmentHorizon}}
+                                    <img src="images/beach.png" class="editGoalImg1"> Pensionierung mit {{formInline.age + goalSimulation.investmentHorizon}}
                                 </div>
                                 <div class="editGoalMenu font1">
                                     <div class="editGoalMenuItem font1 semi-bold " @click="">Zusammenfassung</div>
@@ -1140,8 +1172,8 @@
                                             </div>
                                             <div class="editGoal-chartControl" style="width: 17%">
                                                 <div class="font1 semi-bold" style="margin-bottom: 10px;">Zeit</div>
-                                                <Slider v-model="goalSimulation.investmentHorizon" :min="5" :max="40" :tip-format="yearFormat"></Slider>
-                                                (Pensionierung mit {{30 + goalSimulation.investmentHorizon}})
+                                                <Slider v-model="goalSimulation.investmentHorizon" :min="5" :max="70 - formInline.age" :tip-format="yearFormat"></Slider>
+                                                (Pensionierung mit {{formInline.age + goalSimulation.investmentHorizon}})
                                             </div>
                                             <div class="editGoal-chartControl" style="width: 27%">
                                                 <div class="font1 semi-bold" style="margin-bottom: 10px;">Portfoliozusammensetzung</div>
@@ -1178,7 +1210,7 @@
                                         <div v-if="goalSimulation.editing" class="editGoal-simulationContainer">
                                             <div class="font1 bold l3">CHF {{ roundAndFormat(performanceSimulation.datasets[0].data[goalSimulation.investmentHorizon - 1]) }}</div>
                                             <div class="font1">So viel könnte dein Portfolio unter diesen Annahmen bei deiner Pensionierung
-                                                mit {{30 + goalSimulation.investmentHorizon}} wert sein.</div>
+                                                mit {{formInline.age + goalSimulation.investmentHorizon}} wert sein.</div>
                                         </div>
                                         <div v-if="!goalSimulation.editing" class="editGoal-simulationContainer">
                                             <div class="font1 bold l3">CHF {{ roundAndFormat(performanceSimulation.datasets[0].data[goalSimulation.investmentHorizon - 1]) }} im Alter von {{30 + goalSimulation.investmentHorizon}}</div>

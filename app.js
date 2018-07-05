@@ -105,15 +105,7 @@ document.addEventListener('DOMContentLoaded', function () {
             formInline: {
                 user: '',
                 password: '',
-                age: 30
-            },
-            ruleInline: {
-                user: [
-                    { required: true, message: 'Bitte gib deinen Vornamen ein.', trigger: 'blur' }
-                ],
-                password: [
-                    { required: true, message: 'Bitte gib das Passwort ein.', trigger: 'blur' },
-                ]
+                age: ''
             },
             sound: false,
             chatMessagesControl: {
@@ -248,6 +240,10 @@ document.addEventListener('DOMContentLoaded', function () {
                                         initialInvestment: 70000,
                                         monthlyInvestment: 1200
                                     },
+            getStartedResults:  {
+                                    luna: '',
+                                    moneyaccount: ''
+                                },
             questions: {
                 employment: [
                     {
@@ -380,6 +376,22 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         },
         computed: {
+            yearsToRetirement() {
+                return 65 - this.formInline.age
+            },
+            ruleInline() {
+                return {
+                    user: [
+                        { required: true, message: 'Bitte gib deinen Vornamen ein.', trigger: 'blur' }
+                    ],
+                    password: [
+                        { required: true, message: 'Bitte gib das Passwort ein.', trigger: 'blur' },
+                    ],
+                    age: [
+                        { validator: this.validateAge, trigger: 'blur' }
+                    ]
+                }        
+            },
             chatMessages() {
                 return  {
                     hiThere:    [{
@@ -493,7 +505,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                     show: this.chatMessagesControl.getStarted[4].show
                                 },
                                 {
-                                    msg: "Stell dir vor, du wirst heute 65 und gehst in Pension. Wenn du vor 35 Jahren 70’000 Franken mit mir investiert hättest und dann bis heute monatlich 1200 Franken zusätzlich investiert hättest, so wäre dein Investment heute 2,6 Millionen wert. Auf dem Bankkonto wäre der gleiche Sparbetrag heute 0.68 Millionen wert…",
+                                    msg: "Stell dir vor, du wirst heute 65 und gehst in Pension. Wenn du vor "+ this.yearsToRetirement +" Jahren 70’000 Franken mit mir investiert hättest und dann bis heute monatlich 1200 Franken zusätzlich investiert hättest, so wäre dein Investment heute CHF "+ this.getStartedResults.luna +" wert. Auf dem Bankkonto wäre der gleiche Sparbetrag heute CHF " + this.getStartedResults.moneyaccount +" wert…",
                                     loading: this.chatMessagesControl.getStarted[5].loading,
                                     show: this.chatMessagesControl.getStarted[5].show
                                 },
@@ -568,12 +580,31 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         },
         methods: {
+            validateAge(rule, value, callback) {
+                if (!value) {
+                    return callback(new Error('Bitte gib dein Alter ein.'));
+                }
+                if (!Number.isInteger(value)) {
+                    callback(new Error('Alter muss eine natürliche Zahle zwischen 10 und 60 sein.'));
+                } else {
+                    if (value < 10 || value > 60) {
+                        callback(new Error('Bitte wähle für die Demo ein Alter zwischen 10 und 60 Jahren.'));
+                    } else {
+                        callback();
+                    }
+                }
+
+            },
             welcomePageHandleSubmit(name, password) {
                 var self = this;
                 this.$refs[name].validate((valid) => {
                     if (valid && password == 'lunademo') {
                         this.$Message.success('Success!');
                         this.activeView.welcome = 0;
+                        this.getStartedParameters.investmentHorizon = this.yearsToRetirement;
+                        this.goalSimulation.investmentHorizon = this.yearsToRetirement;
+                        this.getStartedResults.luna = this.roundAndFormat(this.getStartedChart.datasets[1].data[this.getStartedParameters.investmentHorizon]);
+                        this.getStartedResults.moneyaccount = this.roundAndFormat(this.getStartedChart.datasets[0].data[this.getStartedParameters.investmentHorizon]);
                         setTimeout(function(){
                             self.activeView.overLay = 1;
                             self.activeView.hiThere = 1;
