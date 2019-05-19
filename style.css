@@ -104,6 +104,7 @@ body {
     justify-content: center;
     width: 100%;
     background: rgb(99, 61, 252);
+    height: 100vh;
 }
 
 .welcomeContainer{
