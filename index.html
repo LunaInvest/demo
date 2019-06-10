@@ -1040,7 +1040,7 @@
                                 <div class="dashboardGoalContainer" @click="editGoal">
                                     <div class="dashboarGoalContent">
                                         <img src="images/beach.png" class="dashboardGoalImg1">
-                                        <div class="dashboardGoalTitle font1 l4 bold">Pensionierung mit {{30 + goalSimulation.investmentHorizon}}</div>
+                                        <div class="dashboardGoalTitle font1 l4 bold">Pensionierung mit {{formInline.age + goalSimulation.investmentHorizon}}</div>
                                         <div class="dashboardGoalDetails">
                                             <div class="dashboardGoalAssets">
                                                 <div class="font1">Portfoliowert</div>
@@ -1213,7 +1213,7 @@
                                                 mit {{formInline.age + goalSimulation.investmentHorizon}} wert sein.</div>
                                         </div>
                                         <div v-if="!goalSimulation.editing" class="editGoal-simulationContainer">
-                                            <div class="font1 bold l3">CHF {{ roundAndFormat(performanceSimulation.datasets[0].data[goalSimulation.investmentHorizon - 1]) }} im Alter von {{30 + goalSimulation.investmentHorizon}}</div>
+                                            <div class="font1 bold l3">CHF {{ roundAndFormat(performanceSimulation.datasets[0].data[goalSimulation.investmentHorizon - 1]) }} im Alter von {{formInline.age + goalSimulation.investmentHorizon}}</div>
                                         </div>
                                         <line-chart :chart-data="performanceSimulation" :options="'Dein Alter'" style="height: 350px"></line-chart>
                                         <div v-if="goalSimulation.editing">
@@ -1269,7 +1269,7 @@
                                 tag="div">
                                 <div v-if="activeView.setAmount" class="setAmount-dynamicContent" key="amount">
                                     <div class="setAmount-question">
-                                        <div class="font1 l5 semi-bold" style="margin-top: 50px">Wie viel möchtest du monatlich für dein Ziel «Pensionierung mit {{30 + goalSimulation.investmentHorizon}}»
+                                        <div class="font1 l5 semi-bold" style="margin-top: 50px">Wie viel möchtest du monatlich für dein Ziel «Pensionierung mit {{formInline.age + goalSimulation.investmentHorizon}}»
                                             sparen?</div>
                                         <div style="display: flex; align-items: center;">
                                             <div style="width:120px;">
